@@ -1,211 +1,68 @@
-:root {
-  --orange: #f26922;
-  --orange-deep: #f04f23;
-  --ink: #212121;
-  --ink-2: #555350;
-  --muted: #9a9793;
-  --screen: #f4f3f1;
-  --card: #ffffff;
-  --desk: #e4e2df;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
+:root { --coral: #f36b55; --ink: #171717; --muted: #666; --line: #dedede; --ease: cubic-bezier(.22, 1, .36, 1); }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
 body {
-  margin: 0;
-  height: 100%;
-}
-
-body {
-  background: var(--screen);
+  background: #f2f1ef;
   color: var(--ink);
   font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  letter-spacing: -0.015em;
+  letter-spacing: -.02em;
   -webkit-font-smoothing: antialiased;
 }
-
-/* ---------- 모바일: 화면 전체가 곧 폰 ---------- */
-.phone {
-  min-height: 100%;
-  background: var(--screen);
-}
-
+.phone { min-height: 100vh; background: #fff; }
 .page {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 56px 20px 32px;
-}
-
-/* ---------- 데스크탑: 가운데 폰 프레임 안에 표시 ---------- */
-@media (min-width: 640px) {
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
-    background:
-      radial-gradient(900px 600px at 15% 10%, rgba(242, 105, 34, 0.18), transparent 60%),
-      radial-gradient(700px 500px at 90% 95%, rgba(240, 79, 35, 0.14), transparent 60%),
-      var(--desk);
-  }
-
-  .phone {
-    width: 420px;
-    height: min(860px, calc(100vh - 80px));
-    min-height: 0;
-    border-radius: 52px;
-    border: 12px solid #fdfcfb;
-    box-shadow:
-      0 0 0 1px rgba(33, 33, 33, 0.06),
-      0 30px 80px rgba(33, 33, 33, 0.18),
-      0 8px 20px rgba(33, 33, 33, 0.08);
-    overflow-y: auto;
-    scrollbar-width: none;
-  }
-
-  .phone::-webkit-scrollbar {
-    display: none;
-  }
-
-  .page {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 48px 22px 28px;
-  }
-}
-
-/* ---------- 프로필 ---------- */
-.profile {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.avatar {
-  width: 108px;
-  height: 108px;
-  margin: 0 auto 16px;
-  border-radius: 38%;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 12px 28px rgba(33, 33, 33, 0.12);
-}
-
-.avatar img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.7);
-  transform-origin: 50% 24%;
-}
-
-.name {
-  margin: 0 0 6px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.035em;
-}
-
-.tagline {
-  margin: 0;
-  font-size: 14.5px;
-  font-weight: 500;
-  color: var(--ink-2);
-}
-
-/* ---------- 버튼 ---------- */
-.links {
+  width: min(100%, 480px);
+  min-height: 100vh;
+  margin: auto;
+  padding: 72px 24px 36px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.link-card {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 58px;
-  padding: 14px 20px;
-  border-radius: 16px;
-  background: var(--card);
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 15.5px;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(33, 33, 33, 0.07);
-  transition: color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
-
-/* 오렌지가 왼쪽에서 '샥' 채워지는 레이어 */
-.link-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(100deg, var(--orange) 0%, var(--orange-deep) 100%);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.32s var(--ease);
+.profile { text-align: center; }
+.avatar {
+  width: 108px; height: 108px; margin: 0 auto 20px;
+  border-radius: 38%; overflow: hidden; background: #fff;
+  box-shadow: 0 8px 28px #00000016;
 }
-
-.link-icon {
-  font-size: 17px;
-  line-height: 1;
-  transition: transform 0.32s var(--ease);
+.avatar img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.7); transform-origin: 50% 24%;
 }
-
-.link-card:hover,
-.link-card:focus-visible {
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(242, 105, 34, 0.32);
+.name { margin: 0 0 8px; font-size: 23px; font-weight: 800; letter-spacing: -.04em; }
+.tagline { margin: 0; color: var(--muted); font-size: 15px; }
+.social-links { display: flex; justify-content: center; gap: clamp(20px, 7vw, 34px); margin: 34px 0 40px; }
+.social-links a {
+  width: 42px; height: 42px; display: grid; place-items: center; color: var(--ink);
+  transition: color .2s var(--ease), transform .2s var(--ease);
 }
-
-.link-card:hover::before,
-.link-card:focus-visible::before {
-  transform: scaleX(1);
+.social-links a:hover, .social-links a:focus-visible { color: var(--coral); transform: translateY(-3px); }
+.social-links svg { width: 32px; height: 32px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.social-links svg .fill { fill: currentColor; stroke: none; }
+.social-links svg text { fill: currentColor; stroke: none; font: 700 6px Arial, sans-serif; }
+.social-links span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.links { display: grid; gap: 12px; }
+.link-card {
+  min-height: 58px; padding: 16px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid var(--ink); background: #fff; color: var(--ink);
+  text-decoration: none; text-align: center; font-size: 16px; font-weight: 700;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
 }
-
-.link-card:hover .link-icon,
-.link-card:focus-visible .link-icon {
-  transform: scale(1.15) rotate(-8deg);
-}
-
-.link-card:active {
-  transform: translateY(0) scale(0.98);
-}
-
-a:focus-visible {
-  outline: 2px solid var(--orange);
-  outline-offset: 3px;
-}
-
-/* ---------- 푸터 ---------- */
-.footer {
-  margin-top: 36px;
-  text-align: center;
-}
-
-.footer p {
-  margin: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .link-card,
-  .link-card::before,
-  .link-icon {
-    transition: none;
+.link-card.primary { border-color: var(--coral); background: var(--coral); color: #fff; }
+.link-card:hover, .link-card:focus-visible { background: var(--ink); border-color: var(--ink); color: #fff; transform: translateY(-2px); }
+.link-card span { font-size: 18px; font-weight: 400; }
+.footer { margin-top: 42px; text-align: center; }
+.footer a { color: var(--muted); font-size: 14px; text-underline-offset: 3px; }
+.footer a:hover { color: var(--coral); }
+a:focus-visible { outline: 2px solid var(--coral); outline-offset: 4px; }
+@media (min-width: 640px) {
+  body { padding: 40px 0; }
+  .phone {
+    width: 420px; height: min(860px, calc(100vh - 80px)); min-height: 0; margin: auto;
+    border: 1px solid var(--line); border-radius: 34px; overflow-y: auto;
+    box-shadow: 0 24px 80px #00000018;
   }
+  .page { min-height: 100%; padding: 48px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-links a, .link-card { transition: none; }
 }
