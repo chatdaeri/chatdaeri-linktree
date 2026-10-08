@@ -1,5 +1,52 @@
 # chatdaeri.com 링크트리 프로필 페이지 구축 계획
 
+## 2026-10-08 — 자동화 자료 구매 링크 추가
+
+- [x] 기업교육 사례보기 바로 아래에 `https://shop.chatdaeri.com/`으로 연결되는 '자동화 자료 구매하기' 버튼 추가.
+- [x] 기존 뉴스레터와 같은 `.link-card.primary`를 사용해 코랄색 `#f36b55`·버튼 크기·호버·키보드 포커스 효과 재사용. 기존 링크처럼 새 탭으로 열고 `noopener noreferrer` 적용.
+- [x] 검증: 아래 명령으로 링크 순서·주소·새 탭 속성·색상 클래스 및 기존 파일 보존 확인 통과. `git diff --check` 통과.
+- [ ] 작업 브랜치 커밋·푸시 및 main 대상 PR 생성. 병합·운영 배포는 제외.
+
+검증·진행 기록: 쓰기 허용된 작업공간의 별도 복제본에서 `feat/shop-link` 브랜치로 작업했습니다. 원본 저장소는 변경하지 않았습니다. `gh auth status`는 인증이 유효하지 않다고 보고했고, `git ls-remote --heads origin main`은 github.com 이름 해석 실패로 원격 조회가 안 됐습니다. 브랜치 푸시와 PR 생성은 아직 수행하지 못했습니다. 브라우저 연결이 없어 실제 PC·모바일 화면과 호버·키보드 동작도 미확인입니다. 기존 CSS 파일은 바이트 단위로 동일함을 확인했습니다.
+
+### 검증 명령
+
+저장소에는 테스트·빌드 명령이 없으므로 Python 표준 라이브러리로 이번 변경만 확인합니다.
+
+```sh
+python3 - <<'PY'
+from html.parser import HTMLParser
+from pathlib import Path
+import subprocess
+
+class Links(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.cards = []
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == 'a' and 'link-card' in attrs.get('class', '').split():
+            self.cards.append(attrs)
+
+html = Path('index.html').read_text()
+links = Links()
+links.feed(html)
+assert len(links.cards) == 3
+assert links.cards[1]['href'] == 'https://synergylabs.kr/#edu-cases'
+shop = links.cards[2]
+assert shop['href'] == 'https://shop.chatdaeri.com/'
+assert shop['class'] == links.cards[0]['class'] == 'link-card primary'
+assert shop['target'] == '_blank'
+assert set(shop['rel'].split()) == {'noopener', 'noreferrer'}
+addition = '        <a class="link-card primary" href="https://shop.chatdaeri.com/" target="_blank" rel="noopener noreferrer">자동화 자료 구매하기 <span aria-hidden="true">↗</span></a>\n'
+assert html.count(addition) == 1
+assert html.replace(addition, '') == subprocess.check_output(['git', 'show', 'main:index.html']).decode()
+assert Path('styles.css').read_bytes() == subprocess.check_output(['git', 'show', 'main:styles.css'])
+print('링크 순서·URL·새 탭·색상 클래스·기존 HTML/CSS 보존 확인 통과')
+PY
+git diff --check
+```
+
 ## 목표
 - GitHub 레포에 Linktree 스타일 개인 프로필 페이지 제작
 - **Vercel**로 배포
