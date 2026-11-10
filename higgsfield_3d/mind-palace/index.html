@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="palace-token" content="">
+<title>시너지랩스 마인드 팰리스</title>
+<link rel="stylesheet" href="styles/app.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/", "marked": "./vendor/marked/marked.esm.js", "dompurify": "./vendor/dompurify/purify.es.mjs" } }
+</script>
+<script>window.PALACE_DATA = "data/palace-static.json";</script>
+<script type="module" src="src/main.js"></script>
+</head>
+<body>
+<div id="app">
+  <section id="game" aria-label="마인드 팰리스 공간">
+    <div id="stage"></div>
+    <div id="labels" aria-hidden="true"></div>
+
+    <header id="hud-top">
+      <nav id="where" aria-label="현재 위치"></nav>
+      <div id="search-wrap">
+        <label class="sr-only" for="search">검색</label>
+        <input id="search" type="search" autocomplete="off" spellcheck="false" placeholder="자료 이름·경로·설명으로 찾기  /">
+        <div id="search-results" role="listbox" hidden></div>
+      </div>
+      <div id="hud-right">
+        <button id="btn-menu" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu" title="메뉴">메뉴</button>
+        <div id="menu" role="menu" hidden></div>
+        <canvas id="minimap" width="220" height="220" aria-label="미니맵"></canvas>
+        <button id="btn-minimap" class="mini-toggle" aria-pressed="true" title="미니맵 접기">미니맵</button>
+      </div>
+    </header>
+
+    <div id="prompt" role="status" aria-live="polite" hidden><kbd>E</kbd><span></span></div>
+    <div id="shelf-bar" hidden>
+      <div class="shelf-bar-title"><strong></strong><span></span></div>
+      <div class="shelf-bar-keys"><span><kbd>←</kbd><kbd>→</kbd> 옆 책</span><span><kbd>↑</kbd><kbd>↓</kbd> 선반</span><span><kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd> 옆 칸</span><span><kbd>Enter</kbd> 꺼내기</span><span><kbd>Esc</kbd> 나가기</span></div>
+      <div class="shelf-bar-actions"></div>
+    </div>
+    <div id="book-hover" hidden></div>
+    <div id="tutorial" role="status" aria-live="polite" hidden><span></span><button type="button" class="link-btn">건너뛰기</button></div>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <div id="fps" hidden></div>
+
+    <div id="card-layer" hidden>
+      <article id="card" role="dialog" aria-modal="true" aria-labelledby="card-title" tabindex="-1"></article>
+    </div>
+    <div id="overlay" hidden>
+      <div id="overlay-box" role="dialog" aria-modal="true" tabindex="-1"></div>
+    </div>
+    <section id="list2d" aria-label="목록 보기" hidden></section>
+  </section>
+
+  <div id="splitter" role="separator" aria-orientation="vertical" aria-label="열람 패널 폭 조절" tabindex="0" hidden></div>
+  <aside id="reader" aria-label="열람 패널" hidden>
+    <div class="reader-head">
+      <div class="reader-title"><strong id="reader-name"></strong><span id="reader-path"></span></div>
+      <div class="reader-actions">
+        <button type="button" data-act="app">기본 앱으로 열기</button>
+        <button type="button" data-act="finder">Finder에서 보기</button>
+        <button type="button" data-act="copy">경로 복사</button>
+        <button type="button" data-act="close" class="close-btn" aria-label="열람 패널 닫기">닫기</button>
+      </div>
+    </div>
+    <div id="reader-recent" aria-label="최근 연 파일"></div>
+    <div id="reader-body" tabindex="0"></div>
+  </aside>
+
+  <div id="loading">
+    <div class="loading-poster"></div>
+    <div class="loading-box">
+      <h1>시너지랩스 마인드 팰리스</h1>
+      <div class="bar"><i></i></div>
+      <p id="loading-text">서가를 준비하는 중</p>
+    </div>
+  </div>
+  <div id="opening" hidden>
+    <video id="opening-video" playsinline muted preload="auto"></video>
+    <div class="opening-title" hidden>시너지랩스 마인드 팰리스</div>
+    <button id="opening-skip" type="button">건너뛰기</button>
+  </div>
+</div>
+</body>
+</html>

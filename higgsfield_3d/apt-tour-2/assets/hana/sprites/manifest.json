@@ -1,0 +1,123 @@
+{
+ "walk-back": {
+  "file": "assets/hana/sprites/walk-back.webp",
+  "frames": 23,
+  "cols": 16,
+  "w": 248,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.969,
+  "footFrac": 0.0013
+ },
+ "idle-back": {
+  "file": "assets/hana/sprites/idle-back.webp",
+  "frames": 62,
+  "cols": 16,
+  "w": 246,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9697,
+  "footFrac": 0.0012
+ },
+ "idle-backL": {
+  "file": "assets/hana/sprites/idle-backL.webp",
+  "frames": 52,
+  "cols": 17,
+  "w": 236,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9697,
+  "footFrac": 0.0011
+ },
+ "walk-left": {
+  "file": "assets/hana/sprites/walk-left.webp",
+  "frames": 24,
+  "cols": 11,
+  "w": 354,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9694,
+  "footFrac": 0.0012
+ },
+ "idle-left": {
+  "file": "assets/hana/sprites/idle-left.webp",
+  "frames": 56,
+  "cols": 23,
+  "w": 172,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9693,
+  "footFrac": 0.0012
+ },
+ "walk-front": {
+  "file": "assets/hana/sprites/walk-front.webp",
+  "frames": 39,
+  "cols": 17,
+  "w": 238,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9693,
+  "footFrac": 0.0011
+ },
+ "idle-front": {
+  "file": "assets/hana/sprites/idle-front.webp",
+  "frames": 52,
+  "cols": 18,
+  "w": 224,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9696,
+  "footFrac": 0.0012
+ },
+ "walk-frontL": {
+  "file": "assets/hana/sprites/walk-frontL.webp",
+  "frames": 19,
+  "cols": 14,
+  "w": 274,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9697,
+  "footFrac": 0.0011
+ },
+ "idle-frontL": {
+  "file": "assets/hana/sprites/idle-frontL.webp",
+  "frames": 70,
+  "cols": 18,
+  "w": 218,
+  "h": 640,
+  "fps": 24.0,
+  "mode": "loop",
+  "personFrac": 0.9697,
+  "footFrac": 0.0011
+ },
+ "wave-front": {
+  "file": "assets/hana/sprites/wave-front.webp",
+  "frames": 52,
+  "cols": 13,
+  "w": 294,
+  "h": 640,
+  "fps": 12.0,
+  "mode": "once",
+  "personFrac": 0.9696,
+  "footFrac": 0.0012
+ },
+ "read-seated": {
+  "file": "assets/hana/sprites/read-seated.webp",
+  "frames": 45,
+  "cols": 9,
+  "w": 454,
+  "h": 640,
+  "fps": 8.0,
+  "mode": "loop",
+  "personFrac": 0.9693,
+  "footFrac": 0.0015
+ }
+}
