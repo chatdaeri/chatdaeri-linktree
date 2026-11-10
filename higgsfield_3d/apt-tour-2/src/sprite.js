@@ -9,9 +9,11 @@ export class SpriteBody {
     this.root = root; this.man = manifest; this.cfg = cfg;
     this.tex = new Map(); this.loader = new THREE.TextureLoader();
     const geo = new THREE.PlaneGeometry(1, 1); geo.translate(0, 0.5, 0);
-    this.mat = new THREE.MeshBasicMaterial({ transparent: false, alphaTest: 0.5, alphaToCoverage: true, side: THREE.DoubleSide, toneMapped: false, color: new THREE.Color(0.99, 0.97, 0.93) });
+    // 가장자리는 알파 섞기로 그린다. alphaToCoverage는 Mac GPU에서 반투명 가장자리를 점무늬로 찍어 흰 점선 테두리가 생겼다.
+    // 깊이는 쓰므로 발밑 그림자(뒤에 그림)와의 앞뒤는 그대로이고, 창·샤워부스 유리·이동 표시(깊이 안 씀)와는 거리순으로 섞인다.
+    this.mat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.02, depthWrite: true, side: THREE.DoubleSide, toneMapped: false, color: new THREE.Color(0.99, 0.97, 0.93) });
     this.mesh = new THREE.Mesh(geo, this.mat);
-    this.mesh.renderOrder = 1;
+    this.mesh.renderOrder = 0;
     // 주변광 가림(GTAO) 계산용: 오린 모양 그대로, 카메라를 향한 평평한 면(노멀 0,0,1)
     const ao = new THREE.MeshBasicMaterial({ alphaTest: 0.5, side: THREE.DoubleSide, toneMapped: false });
     ao.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n\tgl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);'); };

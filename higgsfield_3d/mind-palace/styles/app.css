@@ -217,7 +217,7 @@ kbd { display: inline-block; min-width: 1.7em; padding: 0 .4em; border: 1px soli
 .l2-books li button small { color: var(--ink-3); margin-left: 6px; }
 
 /* 로딩·오프닝 */
-#loading { position: fixed; inset: 0; z-index: 60; display: grid; place-items: end start; background: var(--stone); transition: opacity .5s; }
+#loading { position: fixed; inset: 0; z-index: 60; display: grid; place-items: end start; background: var(--stone); }
 #loading.done { opacity: 0; pointer-events: none; }
 .loading-poster { position: absolute; inset: 0; background-size: cover; background-position: center; }
 .loading-box { position: relative; margin: 0 0 6vh 6vw; padding: 20px 24px; width: min(420px, 88vw); background: rgba(255, 255, 255, .94); border-radius: 14px; box-shadow: var(--shadow); }

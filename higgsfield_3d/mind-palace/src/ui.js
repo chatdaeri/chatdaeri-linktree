@@ -74,6 +74,10 @@ export class UI {
     if (!rec) { el.hidden = true; return; }
     el.innerHTML = ''; el.append(rec.book.title, h('small', {}, `${rec.level}단 ${rec.within + 1 + rec.bay * 30}번째${rec.missing ? ` · ${this.copy.missing}` : ''}`));
     el.style.left = `${x}px`; el.style.top = `${y}px`; el.hidden = false;
+    // 화면 밖으로 잘리지 않게 게임 화면 안으로 밀어 넣는다
+    const g = $('#game').getBoundingClientRect(), r = el.getBoundingClientRect();
+    if (r.left < g.left + 8) el.style.left = `${x + (g.left + 8 - r.left)}px`;
+    else if (r.right > g.right - 8) el.style.left = `${x - (r.right - g.right + 8)}px`;
   }
 
   // ---------- 책 카드 ----------
@@ -106,6 +110,8 @@ export class UI {
     acts.append(h('button', { class: 'btn ghost', type: 'button', onclick: onClose }, this.copy.putBack));
     card.append(acts);
     $('#card-layer').hidden = false;
+    const cardEl = $('#card-layer').firstElementChild; // 책 카드가 살짝 떠오르며 나타난다
+    if (cardEl) window.gsap?.fromTo(cardEl, { autoAlpha: 0, y: 14, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.38, ease: 'power3.out', clearProps: 'transform' });
     this.cardReturn = document.activeElement;
     card.focus();
     card.querySelector('.btn.primary')?.focus();

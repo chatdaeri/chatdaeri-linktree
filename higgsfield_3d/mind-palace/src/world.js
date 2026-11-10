@@ -517,7 +517,7 @@ export class World {
       if (!obj) continue;
       obj.position.set(x, fy(c) + (p.onTable ? 0.77 : 0), z); obj.rotation.y = rot;
       obj.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-      this.group.add(obj);
+      this.group.add(obj); (this.props ??= []).push(obj);
       const fp = { chair: [0.27, 0.27], table: p.small ? [0.6, 0.35] : [1.25, 0.55], workbench: [1.25, 0.55], plant: [0.3, 0.3], mapStand: [0.5, 0.42], guestbook: [0.34, 0.26], desk: [0.62, 0.32], drawerCabinet: [0.82, 0.32] }[p.type];
       if (fp && !p.onTable && p.type !== 'chair') this.nav.blockBox(x, z, fp[0], fp[1], -rot);
       if (p.type === 'chair') {

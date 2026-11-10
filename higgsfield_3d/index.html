@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Higgsfield × three.js 3D | 챗대리</title>
 <meta name="description" content="Higgsfield로 만든 실사 에셋과 three.js로 만든 브라우저 3D 체험 3가지">
+<link rel="stylesheet" href="vendor/motion/lenis.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root { --accent: #FF7E5F; --ink: #1F1D1A; --sub: #6B655C; }
@@ -14,12 +15,14 @@
   h1 { font-size: 30px; margin: 0 0 8px; letter-spacing: -0.02em; }
   .lead { margin: 0 0 36px; color: var(--sub); font-size: 16px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-  a.card { display: block; text-decoration: none; color: inherit; border: 1px solid #ECE8E2; border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+  a.card { display: block; visibility: hidden; /* GSAP가 차례로 보여 준다 */ text-decoration: none; color: inherit; border: 1px solid #ECE8E2; border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
   a.card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.08); }
-  .card img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: #F3F1EC; }
+  .card .ph { display: block; overflow: hidden; aspect-ratio: 16 / 10; background: #F3F1EC; }
+  .card img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+  a.card:hover img { transform: scale(1.04); }
   .card div { padding: 16px 18px 18px; }
   .card b { display: block; font-size: 18px; margin-bottom: 4px; }
-  .card span { font-size: 14px; color: var(--sub); }
+  .card .d { display: block; font-size: 14px; line-height: 1.5; color: var(--sub); }
   .card em { display: block; margin-top: 12px; font-style: normal; font-size: 14px; font-weight: 600; color: var(--accent); }
   .note { margin-top: 32px; font-size: 13px; color: var(--sub); }
 </style>
@@ -29,11 +32,21 @@
   <h1>Higgsfield × three.js 3D 체험</h1>
   <p class="lead">실사 인물(Hana)·재질·가구를 Higgsfield로 만들고, three.js로 브라우저에서 바로 걸어 다니게 만든 예시입니다.</p>
   <div class="grid">
-    <a class="card" href="mind-palace/"><img src="thumbs/mind-palace.webp" alt="마인드 팰리스 정문 앞의 Hana"><div><b>마인드 팰리스</b><span>문서 목차를 건물로 — 방은 분야, 서가는 목차, 책은 문서</span><em>들어가기 →</em></div></a>
-    <a class="card" href="apt-tour-1/"><img src="thumbs/apt-tour-1.webp" alt="84㎡ 아파트 거실"><div><b>아파트 투어 1</b><span>84㎡ 3룸 · 평면도 한 장으로 만든 집 안 투어</span><em>들어가기 →</em></div></a>
-    <a class="card" href="apt-tour-2/"><img src="thumbs/apt-tour-2.webp" alt="2룸 아파트 침실"><div><b>아파트 투어 2</b><span>2룸 · 평면도와 3D 목업을 함께 읽어 만든 투어</span><em>들어가기 →</em></div></a>
+    <a class="card" href="mind-palace/"><span class="ph"><img src="thumbs/mind-palace.webp" alt="마인드 팰리스 정문 앞의 Hana"></span><div><b>마인드 팰리스</b><span class="d">문서 목차를 건물로 — 방은 분야, 서가는 목차, 책은 문서</span><em>들어가기 →</em></div></a>
+    <a class="card" href="apt-tour-1/"><span class="ph"><img src="thumbs/apt-tour-1.webp" alt="84㎡ 아파트 거실"></span><div><b>아파트 투어 1</b><span class="d">84㎡ 3룸 · 평면도 한 장으로 만든 집 안 투어</span><em>들어가기 →</em></div></a>
+    <a class="card" href="apt-tour-2/"><span class="ph"><img src="thumbs/apt-tour-2.webp" alt="2룸 아파트 침실"></span><div><b>아파트 투어 2</b><span class="d">2룸 · 평면도와 3D 목업을 함께 읽어 만든 투어</span><em>들어가기 →</em></div></a>
   </div>
   <p class="note">마인드 팰리스의 책은 모두 시연용 가상 자료입니다. 크롬·엣지 데스크톱에서 가장 잘 보입니다.</p>
 </main>
+<script src="vendor/motion/gsap.min.js"></script>
+<script src="vendor/motion/lenis.min.js"></script>
+<script>
+  // 부드러운 스크롤(Lenis) + 카드가 차례로 떠오른다(GSAP). 라이브러리를 못 불러오면 그냥 보인다
+  if (window.gsap) {
+    gsap.from('h1, .lead', { autoAlpha: 0, y: 12, duration: 0.7, stagger: 0.08, ease: 'power3.out' });
+    gsap.fromTo('a.card', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, delay: 0.2, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' });
+    if (window.Lenis) { const lenis = new Lenis({ lerp: 0.1 }); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+  } else document.querySelectorAll('a.card').forEach(a => { a.style.visibility = 'visible'; });
+</script>
 </body>
 </html>

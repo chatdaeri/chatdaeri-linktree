@@ -92,7 +92,7 @@ class App {
     this.clock = new THREE.Timer(); this.clock.connect?.(document);
     this.renderer.setAnimationLoop(() => this.loop());
     await new Promise(r => setTimeout(r, 120));
-    $('#loading').classList.add('done');
+    if (window.gsap) window.gsap.to('#loading', { autoAlpha: 0, duration: 0.6, ease: 'power2.out' }); else $('#loading').classList.add('done');
     window.__readyAt = performance.now(); // 조작 가능해진 시각(ms, 페이지 열린 뒤)
     setTimeout(() => { $('#loading').hidden = true; }, 600);
     // 모바일·동작 줄이기 → 2D 보기 기본
@@ -302,6 +302,10 @@ class App {
     if (++this.frameNo % 2 === 0) this.updateLabels();
     if (this.frameNo % 3 === 0) this.ui.drawMinimap(H.position, this.cam.yaw, room);
     if (this.frameNo % 120 === 0 && (this.mode === 'explore')) store.set('pos', { x: H.position.x, z: H.position.z, heading: H.heading, yaw: this.cam.yaw });
+    // 서가 앞 클로즈업: 카메라 1.4m 안의 화분·의자 등 소품은 숨긴다(화면을 가리지 않게). 튜토리얼 알림도 서가에선 숨김
+    const close = ['shelf', 'pull', 'card'].includes(this.mode) || this.reader?.isOpen;
+    for (const p of this.world.props ?? []) p.visible = !close || p.position.distanceTo(this.camera.position) > 1.4;
+    const tut = $('#tutorial'); if (tut && !tut.hidden) tut.style.visibility = this.mode === 'shelf' ? 'hidden' : '';
     if (this.post?.enabled) this.post.render(dt); else this.renderer.render(this.scene, this.camera);
     // 느린 컴퓨터: 2초 평균 40fps 아래면 주변광 가림 → 빛 번짐 순으로 끈다
     if (!fixed && this.post && !document.hidden) {
@@ -722,6 +726,7 @@ class App {
   }
   async closeReader() {
     if (this.photo?.active) return this.photo.closeReader();
+    this.ui.hoverLabel(null);
     this.reader.close();
     this.onResize();
     const H = this.hana;
@@ -749,7 +754,7 @@ class App {
   fromSearch(r, direct) {
     const b = r.book;
     if (direct) { this.openItem(r.att ?? b, { goTo: b.id }); return; }
-    this.guideTo(b.id, { auto: false });
+    this.guideTo(b.id, { auto: true }); // 검색에서 고르면 Hana가 그 서가까지 걸어간다
   }
   goToBook(bookId) { this.guideTo(bookId, { auto: true }); }
   guideTo(bookId, { auto }) {
@@ -765,6 +770,13 @@ class App {
     this.showGuide(pts, { rec, info, target });
     if (auto) this.walkGuide();
     else toast(`바닥 길안내를 따라가거나 Enter로 걸어가세요`, 2600);
+  }
+  // 서가·책을 누르면 그 서가 앞으로 걸어가 서가 보기로 들어간다
+  walkToShelf(info, rec = null, fast = false) {
+    if (this.reader.isOpen && this.hana.seated) this.standUpFromReading();
+    const t = this.shelfApproach(info, rec);
+    this.clearGuide();
+    this.walkTo(t.x, t.z, { fast, stopAt: 0.25, then: () => this.enterShelf(info, rec) });
   }
   shelfApproach(info, rec) {
     if (info.kind === 'unit') return new THREE.Vector3(-0.75, 0, 0).applyMatrix4(info.holder.matrixWorld);
@@ -803,12 +815,17 @@ class App {
   }
   openFromList(b) {
     const rec = this.shelves.recByBook.get(b.id);
-    if (!rec) { this.openItem(b); return; }
+    if (!rec || this.config.static) { this.openItem(b); return; } // 공개판: 목록에서 누르면 바로 읽기
     this.ui.showCard(rec, { onOpen: () => { this.ui.hideCard(); this.openItem(b); }, onAttach: a => { this.ui.hideCard(); this.openItem(a); }, onIndex: () => { this.ui.hideCard(); this.openItem({ id: this.indexIds.get(b.src.index), title: b.src.index.split('/').pop(), path: b.src.index, kind: 'file', ext: 'md' }); }, onClose: () => this.ui.hideCard() });
   }
   toggleList(show) {
     const el = $('#list2d');
-    if (show) { if (!el.dataset.built) { this.ui.buildList(); el.dataset.built = '1'; } el.hidden = false; el.querySelector('summary')?.focus(); }
+    if (show) {
+      if (!el.dataset.built) { this.ui.buildList(); el.dataset.built = '1'; if (window.Lenis && window.gsap) { this.listLenis = new window.Lenis({ wrapper: el, content: el, lerp: 0.12 }); window.gsap.ticker.add(t => this.listLenis.raf(t * 1000)); } }
+      el.hidden = false; el.querySelector('summary')?.focus();
+      window.gsap?.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, clearProps: 'opacity,visibility' });
+      window.gsap?.from(el.querySelectorAll('details, .l2-room'), { autoAlpha: 0, y: 10, duration: 0.4, stagger: 0.04, ease: 'power2.out', clearProps: 'all' });
+    }
     else { el.hidden = true; this.focusGame(); }
   }
   async refreshData() {

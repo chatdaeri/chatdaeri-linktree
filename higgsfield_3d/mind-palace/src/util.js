@@ -99,6 +99,7 @@ export async function post(url) {
 let toastTimer = 0;
 export function toast(msg, ms = 2400) {
   const el = $('#toast'); el.textContent = msg; el.hidden = false;
+  window.gsap?.fromTo(el, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power3.out', overwrite: true });
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms);
 }
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;

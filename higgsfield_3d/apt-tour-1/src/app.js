@@ -8,6 +8,7 @@ import { Nav } from './nav.js';
 import { SpriteBody } from './sprite.js';
 
 const $ = s => document.querySelector(s);
+const gsap = window.gsap; // vendor/motion/gsap.min.js (index.html에서 먼저 불러옴)
 const damp = (a, b, k, dt) => a + (b - a) * (1 - Math.exp(-k * dt));
 const angDiff = (a, b) => { let d = (b - a) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; };
 
@@ -60,8 +61,13 @@ class Tour {
     this.clock = new THREE.Timer(); this.clock.connect?.(document);
     R.setAnimationLoop(() => this.loop());
     step(1, '준비됨');
-    setTimeout(() => $('#load').classList.add('done'), 200);
-    setTimeout(() => { $('#load').hidden = true; }, 900);
+    // 불러오기 막이 걷히고 화면 요소가 차례로 들어온다
+    gsap.to('#load', { autoAlpha: 0, duration: 0.7, delay: 0.15, ease: 'power2.out', onComplete: () => { $('#load').hidden = true; } });
+    gsap.from(['#head', '#side', '#bar', '#help', '#hint'], { autoAlpha: 0, y: 14, duration: 0.7, delay: 0.35, stagger: 0.08, ease: 'power3.out', clearProps: 'transform' });
+    // 첫 화면 = 집 전체(위에서 보기). 처음 조작하면 안내 한 줄은 사라진다
+    this.setMode('dollhouse', { instant: true });
+    const hideHint = () => { gsap.to('#hint', { autoAlpha: 0, duration: 0.4 }); removeEventListener('pointerdown', hideHint, true); removeEventListener('keydown', hideHint, true); };
+    addEventListener('pointerdown', hideHint, true); addEventListener('keydown', hideHint, true);
     window.tour = this;
   }
 
@@ -129,10 +135,12 @@ class Tour {
   marker(x, z) {
     if (!this.mk) { this.mk = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.22, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xFF7E5F, transparent: true, opacity: 0.9, depthWrite: false })); this.mk.userData.noAO = true; this.scene.add(this.mk); }
     this.mk.position.set(x, 0.02, z); this.mk.material.opacity = 0.9;
+    gsap.fromTo(this.mk.scale, { x: 0.4, y: 0.4, z: 0.4 }, { x: 1, y: 1, z: 1, duration: 0.45, ease: 'back.out(2.2)' });
   }
 
   // ---------- 자동 투어 ----------
   startTour() {
+    gsap.to('#hint', { autoAlpha: 0, duration: 0.4 });
     this.touring = true; this.tourIdx = -1; $('#btn-tour').textContent = '투어 멈춤'; $('#btn-tour').classList.add('on');
     if (this.mode !== 'follow') this.setMode('follow');
     this.nextStop();
@@ -145,7 +153,11 @@ class Tour {
     if (this.tourIdx >= names.length) { this.stopTour(); this.caption('투어를 마쳤습니다', '방 목록에서 다시 골라 보세요'); return; }
     const room = this.S.rooms.find(r => r.name === names[this.tourIdx]);
     if (!room) { this.nextStop(); return; }
-    this.goRoom(room, () => { this.tourTimer = setTimeout(() => this.nextStop(), 2600); });
+    const at = this.tourIdx;
+    this.goRoom(room, () => {
+      this.caption(room.name, `${(room.stated ?? room.area).toFixed(1)}㎡ · 투어 ${at + 1}/${names.length}`);
+      this.tourTimer = setTimeout(() => this.nextStop(), 3200);
+    });
   }
   // 방 둘러보기 자리: 넓은 방 = 가운데(문에서 들어온 방향으로 본다), 5㎡ 미만 작은 방 = 문 앞에서 안을 본다
   goRoom(room, then) {
@@ -193,7 +205,14 @@ class Tour {
     H.state = H.speed > 0.15 ? 'walk' : 'idle';
     // 방 바뀜 → 자막
     const room = this.house.roomAt(P.x, P.z);
-    if (room && room !== this.room) { this.room = room; this.caption(room.name, `${(room.stated ?? room.area).toFixed(1)}㎡`); this.markList(room); }
+    // 방 바뀜: 0.25초 이상 머물 때만(문턱에서 두 방을 오가며 자막이 깜빡이지 않게)
+    if (room && room !== this.room) {
+      if (this.pendRoom !== room) { this.pendRoom = room; this.pendT = this.t; }
+      else if (this.t - this.pendT > 0.25 || !this.room) {
+        this.room = room; this.pendRoom = null; this.markList(room);
+        if (!room.auto && !this.touring) this.caption(room.name, `${(room.stated ?? room.area).toFixed(1)}㎡`); // 복도·수납칸은 자막 없음, 투어 중엔 도착할 때 띄움
+      }
+    } else this.pendRoom = null;
     this.updateCamera(dt, speed > 0);
     this.sprite.update(dt, H, this.camera);
     if (this.mk) { this.mk.material.opacity = Math.max(0, this.mk.material.opacity - dt * 0.8); this.mk.visible = this.mk.material.opacity > 0.01; }
@@ -215,24 +234,28 @@ class Tour {
     }
     if (!best || best.s < 1.2) return; // 너무 좁으면 따라가기 그대로
     const look = new THREE.Vector3((P.x + cx) / 2, 0.85, (P.z + cz) / 2);
-    this.shot = { t: 0, from: this.camera.position.clone(), fromLook: this._look?.clone() ?? look.clone(), pos: new THREE.Vector3(best.x, H - 0.22, best.z), look };
+    this.killCam();
+    const shot = this.shot = { k: 0, from: this.camera.position.clone(), fromLook: this._look?.clone() ?? look.clone(), pos: new THREE.Vector3(best.x, H - 0.22, best.z), look, fov0: this.camera.fov };
+    shot.tw = gsap.to(shot, { k: 1, duration: 1.3, ease: 'power2.inOut' });
   }
   updateCamera(dt, moving) {
     const P = this.hana.position, cam = this.camera;
     if (this.mode === 'dollhouse') { this.orbit.update(); return; }
     const c = this.cam;
     if (this.shot) {
-      if (moving || this.t - c.manualT < 0.2) { this.shot = null; c.distNow = null; this.blend = { from: cam.position.clone(), look: this._look.clone(), t: 0 }; }
+      if (moving || this.t - c.manualT < 0.2) { this.startBlend(0.9); }
       else {
-        const s = this.shot; s.t = Math.min(1, s.t + dt / 1.1); const k = s.t * s.t * (3 - 2 * s.t);
+        const s = this.shot, k = s.k;
         cam.position.lerpVectors(s.from, s.pos, k);
         this._look = new THREE.Vector3().lerpVectors(s.fromLook, s.look, k);
-        cam.fov = damp(cam.fov, 72, 4, dt); cam.updateProjectionMatrix();
+        this.clampCam(this._look, cam.position);
+        cam.fov = s.fov0 + (72 - s.fov0) * k; cam.updateProjectionMatrix();
         cam.lookAt(this._look);
         return;
       }
     }
-    if (moving && this.t - c.manualT > 1.5) c.yaw += angDiff(c.yaw, this.hana.heading) * (1 - Math.exp(-2.2 * dt));
+    // 걸을 때 카메라가 등 뒤를 따라 돈다. Hana가 카메라 쪽(100° 넘게)으로 걸으면 돌지 않는다(휙 도는 것 방지)
+    if (moving && this.t - c.manualT > 1.5 && Math.abs(angDiff(c.yaw, this.hana.heading)) < 1.75) c.yaw += angDiff(c.yaw, this.hana.heading) * (1 - Math.exp(-1.8 * dt));
     const T = new THREE.Vector3(P.x, 1.2, P.z);
     // 뒤가 막히면(1.3m 미만) 좌우 ±45° 안에서 더 트인 쪽으로 카메라를 천천히 돌린다(손으로 돌린 직후는 그대로)
     const free = yw => { const d = new THREE.Vector3(-Math.sin(yw), Math.tan(c.pitch), -Math.cos(yw)).normalize(); const h = new THREE.Raycaster(T, d, 0.05, c.dist + 0.3).intersectObjects(this.blockers, true)[0]; return h ? h.distance : c.dist + 0.3; };
@@ -253,41 +276,90 @@ class Tour {
       const extra = Math.max(0, (c.dist - dist) / c.dist) * 0.45;
       dirv = back.clone().add(new THREE.Vector3(0, Math.tan(c.pitch + extra), 0)).normalize();
     }
-    c.distNow = damp(c.distNow ?? dist, dist, hit ? 20 : 4, dt);
+    c.distNow = damp(c.distNow ?? dist, dist, hit ? 9 : 3, dt); // 벽에 닿을 때도 튀지 않게
     const pos = T.clone().addScaledVector(dirv, c.distNow);
     pos.y = Math.min(this.house.H - 0.12, pos.y);
     // 좁을수록 넓게 본다(60° → 75°)
     const want = 60 + Math.max(0, 1 - c.distNow / c.dist) * 15;
     if (Math.abs(cam.fov - want) > 0.1) { cam.fov = damp(cam.fov, want, 4, dt); cam.updateProjectionMatrix(); }
     this._look = new THREE.Vector3(T.x, T.y - 0.15, T.z);
-    if (this.blend) { // 방 사진 구도에서 따라가기로 0.7초에 걸쳐 돌아온다
-      const b = this.blend; b.t = Math.min(1, b.t + dt / 0.7); const k = b.t * b.t * (3 - 2 * b.t);
+    if (this.blend) { // 다른 구도(방 사진·위에서 보기)에서 따라가기로 GSAP 곡선으로 돌아온다
+      const b = this.blend, k = b.k;
       pos.lerpVectors(b.from, pos, k); this._look.lerpVectors(b.look, this._look, k);
-      if (b.t >= 1) this.blend = null;
     }
+    this.clampCam(this._look, pos);
     cam.position.copy(pos); cam.lookAt(this._look);
   }
-  setMode(m) {
+  // 위에서 보기: 빛 번짐 끄고 노출을 낮춰 하얗게 날리지 않게
+  dollLook(on) {
+    const R = this.renderer;
+    gsap.to(R, { toneMappingExposure: on ? 0.92 : 1.08, duration: 0.8 });
+    if (this.post?.bloom) this.post.bloom.enabled = on ? false : !this.perfOffBloom;
+  }
+  // 보는 점 → 카메라 사이에 벽·문짝·키 큰 가구가 있으면 그 앞으로 당긴다(전환 중에도 파묻히지 않게)
+  clampCam(from, pos) {
+    const d = pos.clone().sub(from), L = d.length(); if (L < 0.05) return;
+    const hit = new THREE.Raycaster(from, d.normalize(), 0.02, L).intersectObjects(this.blockers, true)[0];
+    if (hit) pos.copy(from).addScaledVector(d, Math.max(0.35, hit.distance - 0.18));
+  }
+  killCam() { this.shot?.tw?.kill(); this.shot = null; this.blend?.tw?.kill(); this.blend = null; this.flight?.kill(); this.flight = null; }
+  // 지금 카메라 자리에서 따라가기 자리로 부드럽게 돌아오기
+  startBlend(dur = 0.9) {
+    const cam = this.camera;
+    this.killCam();
+    this.cam.distNow = null;
+    const b = this.blend = { k: 0, from: cam.position.clone(), look: (this._look ?? this.orbit.target).clone() };
+    b.tw = gsap.to(b, { k: 1, duration: dur, ease: 'power2.out', onComplete: () => { if (this.blend === b) this.blend = null; } });
+  }
+  setMode(m, { instant = false } = {}) {
+    if (m === this.mode) return;
     this.mode = m;
-    const doll = m === 'dollhouse';
-    this.house.ceilings.visible = !doll;
-    this.backdrop.visible = !doll; // 위에서 볼 때는 모형처럼 밝은 바탕
-    this.orbit.enabled = doll;
+    const doll = m === 'dollhouse', M = this.house.mats;
     $('#btn-view').textContent = doll ? '따라가기' : '위에서 보기';
+    // 천장·창밖은 끄고 켜지 않고 서서히
+    for (const mt of [M.ceiling, this.backdrop.material]) { mt.transparent = true; gsap.killTweensOf(mt); }
     if (doll) {
-      const [W, D] = this.S.size, R = Math.max(W, D);
-      this.camera.position.set(W / 2 - R * 0.15, R * 1.05, D / 2 + R * 0.75); this.orbit.target.set(W / 2, 0, D / 2); this.orbit.update();
+      this.killCam();
+      const [W, D] = this.S.size, R = Math.max(W, D), cam = this.camera;
+      const to = new THREE.Vector3(W / 2 - R * 0.15, R * 1.05, D / 2 + R * 0.75), target = new THREE.Vector3(W / 2, 0, D / 2);
+      const from = cam.position.clone(), look0 = (this._look ?? target).clone(), fov0 = cam.fov, o = { k: 0 };
+      this.orbit.enabled = false;
+      this.dollLook(true);
+      if (instant) {
+        cam.position.copy(to); this.orbit.target.copy(target); cam.fov = 50; cam.updateProjectionMatrix();
+        M.ceiling.opacity = 0; this.house.ceilings.visible = false; this.backdrop.material.opacity = 0; this.backdrop.visible = false;
+        this.orbit.enabled = true; this.orbit.update(); return;
+      }
+      gsap.to(M.ceiling, { opacity: 0, duration: 0.5, onComplete: () => { this.house.ceilings.visible = false; } });
+      gsap.to(this.backdrop.material, { opacity: 0, duration: 0.8, onComplete: () => { this.backdrop.visible = false; } });
+      this.flight = gsap.to(o, { k: 1, duration: 1.4, ease: 'power3.inOut', onUpdate: () => {
+        cam.position.lerpVectors(from, to, o.k); this.orbit.target.lerpVectors(look0, target, o.k);
+        cam.fov = fov0 + (50 - fov0) * o.k; cam.updateProjectionMatrix(); cam.lookAt(this.orbit.target);
+      }, onComplete: () => { this.flight = null; if (this.mode === 'dollhouse') { this.orbit.enabled = true; this.orbit.update(); } } });
+    } else {
+      this.orbit.enabled = false;
+      this.dollLook(false);
+      this._look = this.orbit.target.clone();
+      this.house.ceilings.visible = true; this.backdrop.visible = true;
+      gsap.to(M.ceiling, { opacity: 1, duration: 0.6, delay: 0.5, onComplete: () => { M.ceiling.transparent = false; } });
+      gsap.to(this.backdrop.material, { opacity: 1, duration: 0.8, delay: 0.3 });
+      this.startBlend(1.2);
     }
   }
 
   // ---------- 화면 글자 ----------
   ui() {
-    const list = $('#rooms');
+    const list = document.createElement('div'); list.className = 'rooms-inner'; $('#rooms').append(list);
     for (const r of this.S.rooms.filter(r => !r.auto)) {
       const b = document.createElement('button'); b.className = 'room';
       b.innerHTML = `<span>${r.name}</span><em>${(r.stated ?? r.area).toFixed(1)}㎡</em>`;
       b.onclick = () => { this.stopTour(); if (this.mode !== 'follow') this.setMode('follow'); this.goRoom(r); };
       b.dataset.name = r.name; list.append(b);
+    }
+    // 방 목록이 길면 Lenis로 부드럽게 굴린다(GSAP 시계 하나로 맞춘다)
+    if (window.Lenis) {
+      this.lenis = new window.Lenis({ wrapper: $('#rooms'), content: list, lerp: 0.12, wheelMultiplier: 0.9 });
+      gsap.ticker.add(t => this.lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
     }
     $('#btn-tour').onclick = () => (this.touring ? this.stopTour() : this.startTour());
     $('#btn-view').onclick = () => this.setMode(this.mode === 'follow' ? 'dollhouse' : 'follow');
@@ -302,10 +374,18 @@ class Tour {
       this.stopTour(); this.walkTo(x, z); this.marker(x, z);
     });
   }
-  markList(room) { for (const b of document.querySelectorAll('.room')) b.classList.toggle('here', b.dataset.name === room.name); }
+  markList(room) {
+    for (const b of document.querySelectorAll('.room')) {
+      const on = !room.auto && b.dataset.name === room.name; b.classList.toggle('here', on);
+      if (on) { gsap.fromTo(b, { scale: 0.96 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' }); this.lenis?.scrollTo(b, { offset: -40, duration: 0.8 }); }
+    }
+  }
   caption(title, sub) {
     const el = $('#caption'); el.querySelector('b').textContent = title; el.querySelector('span').textContent = sub ?? '';
-    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    this.capTl?.kill();
+    this.capTl = gsap.timeline()
+      .fromTo(el, { autoAlpha: 0, y: -8 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out' })
+      .to(el, { autoAlpha: 0, y: -4, duration: 0.6, ease: 'power2.in' }, '+=1.9');
   }
   drawMini() {
     const cv = $('#mini'); if (!this.planImg) return;
@@ -335,7 +415,7 @@ class Tour {
     const now = performance.now(), gap = (now - p.last) / 1000; p.last = now;
     if (gap > 0.2 || document.hidden) { p.t = 0; p.n = 0; return; }
     p.t += gap; p.n++;
-    if (p.t >= 2) { if (p.n / p.t < 40) { if (this.post.ao.enabled) this.post.ao.enabled = false; else this.post.bloom.enabled = false; } p.t = 0; p.n = 0; }
+    if (p.t >= 2) { if (p.n / p.t < 40) { if (this.post.ao.enabled) this.post.ao.enabled = false; else { this.post.bloom.enabled = false; this.perfOffBloom = true; } } p.t = 0; p.n = 0; }
   }
 }
 

@@ -83,7 +83,7 @@ export function viewBackdrop(center, R, floorY = -1.2) {
 export class Post {
   constructor(renderer, scene, camera) {
     const size = renderer.getSize(new THREE.Vector2());
-    // MSAA 4배: Hana 판 가장자리(alphaToCoverage)가 부드럽게 섞이려면 다중 표본이 필요하다(없으면 흰 테두리)
+    // MSAA 4배: 벽·가구 모서리 계단 현상을 줄인다(Hana 판 가장자리는 sprite.js에서 알파 섞기로 처리)
     const rt = new THREE.WebGLRenderTarget(size.x * renderer.getPixelRatio(), size.y * renderer.getPixelRatio(), { type: THREE.HalfFloatType, samples: 4 });
     this.composer = new EffectComposer(renderer, rt);
     this.composer.addPass(new RenderPass(scene, camera));

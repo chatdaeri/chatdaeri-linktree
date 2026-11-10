@@ -31,8 +31,13 @@ export class Reader {
       if (act === 'app' || act === 'finder') this.openExternal(act);
     });
     this.setupSplitter();
+    // 열람 패널 스크롤: Lenis(관성 있는 부드러운 굴림). GSAP 시계 하나로 돌린다
+    if (window.Lenis && window.gsap) {
+      this.lenis = new window.Lenis({ wrapper: this.body, content: this.body, lerp: 0.12, wheelMultiplier: 0.9 });
+      window.gsap.ticker.add(t => this.lenis.raf(t * 1000));
+    }
     // 정적 공개판(config.static): 실제 파일이 없으므로 앱·Finder·경로 버튼을 숨긴다
-    if (this.cfg.static) for (const a of ['app', 'finder', 'copy']) this.el.querySelector(`[data-act="${a}"]`).hidden = true;
+    if (this.cfg.static) for (const a of ['app', 'finder', 'copy']) { const b = this.el.querySelector(`[data-act="${a}"]`); b.hidden = true; b.style.display = 'none'; }
   }
   get isOpen() { return !this.el.hidden; }
 
@@ -40,7 +45,7 @@ export class Reader {
   async open(item, opts = {}) {
     const first = !this.isOpen;
     this.el.hidden = false; $('#splitter').hidden = false; document.getElementById('app').classList.add('split'); document.body.classList.add('reading');
-    if (first) { this.applyWidth(); this.app.onResize(); }
+    if (first) { this.applyWidth(); this.app.onResize(); window.gsap?.fromTo(this.el, { autoAlpha: 0, x: 36 }, { autoAlpha: 1, x: 0, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }); }
     this.current = item;
     const seq = ++this.seq;
     $('#reader-name').textContent = item.title;
@@ -60,6 +65,8 @@ export class Reader {
       this.body.innerHTML = '';
       if (opts.goTo) this.body.append(h('div', { class: 'rd-pad rd-goto' }, h('button', { class: 'btn', type: 'button', onclick: () => this.app.goToBook(opts.goTo) }, this.cfg.copy.goThere)));
       this.body.append(view);
+      this.lenis?.resize(); this.lenis?.scrollTo(0, { immediate: true });
+      window.gsap?.from(view, { autoAlpha: 0, y: 10, duration: 0.35, ease: 'power2.out', clearProps: 'all' });
     } catch (e) {
       if (seq !== this.seq) return;
       this.body.innerHTML = '';
