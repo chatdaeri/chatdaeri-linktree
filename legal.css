@@ -1,0 +1,19 @@
+/* 약관 페이지 전용: 링크트리 styles.css 토큰(--coral, --ink, --muted, --line) 재사용 */
+.legal { width: min(100%, 720px); margin: 0 auto; padding: 56px 24px 72px; }
+.legal-back { display: inline-block; margin-bottom: 28px; color: var(--muted); font-size: 14px; text-decoration: none; }
+.legal-back:hover { color: var(--coral); }
+.legal h1 { margin: 0 0 8px; font-size: 26px; font-weight: 800; letter-spacing: -.04em; }
+.legal .meta { margin: 0 0 36px; color: var(--muted); font-size: 14px; }
+.legal h2 { margin: 36px 0 12px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 18px; font-weight: 800; }
+.legal p, .legal li { font-size: 15px; line-height: 1.75; }
+.legal ul { padding-left: 20px; }
+.legal table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; line-height: 1.6; }
+.legal th, .legal td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+.legal th { background: #f7f6f4; font-weight: 700; }
+.legal a { color: var(--ink); text-underline-offset: 3px; }
+.legal a:hover { color: var(--coral); }
+.legal .todo { background: #fff3b0; padding: 0 4px; }
+.legal-foot { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.7; }
+@media (max-width: 560px) { .legal table, .legal thead, .legal tbody, .legal tr, .legal th, .legal td { font-size: 13px; } }
+.legal table.kv caption { caption-side: top; text-align: left; font-weight: 700; padding: 6px 0; }
+.legal table.kv th { width: 120px; }
