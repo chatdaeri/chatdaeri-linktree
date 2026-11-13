@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if(!location.pathname.endsWith("/"))location.replace(location.pathname+"/"+location.search+location.hash)</script>
+<title>2룸 아파트 · 집 안 둘러보기</title>
+<link rel="stylesheet" href="../vendor/motion/lenis.css">
+<link rel="stylesheet" href="style.css">
+<script src="../vendor/motion/lenis.min.js"></script>
+</head>
+<body>
+<div id="stage">
+  <video id="tour" src="assets/tour.mp4" poster="assets/poster.jpg" muted playsinline preload="auto"></video>
+  <div id="cards"></div>
+  <p id="hint">스크롤해서 둘러보기</p>
+  <div id="bar"><i></i></div>
+  <a id="back3d" href="../#end">← 3D 투어로 돌아가기</a>
+</div>
+<div id="track"></div>
+<div id="load"><p>영상을 불러오는 중</p></div>
+<script src="tour.js"></script>
+</body>
+</html>

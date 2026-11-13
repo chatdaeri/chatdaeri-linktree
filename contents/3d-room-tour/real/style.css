@@ -1,0 +1,37 @@
+@font-face { font-family: 'Pretendard'; src: url('../fonts/PretendardVariable.woff2') format('woff2'); font-weight: 100 900; font-display: block; }
+html, body { margin: 0; background: #1D1C1A; color: #1D1C1A; font-family: 'Pretendard', system-ui, sans-serif; }
+#stage { position: fixed; inset: 0; overflow: hidden; }
+#tour { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+#track { height: 1400vh; } /* 현관 → 주방·식당 → 거실 → 발코니 → 침실1 → 욕실 → 침실2 */
+
+/* 방 정보: 왼쪽 위 크림 카드. 들어설 때 줄마다 차례로 떠오르고, 나갈 때 위로 사라진다 */
+#cards { position: absolute; left: 0; top: 0; }
+.card { position: absolute; left: 38px; top: 48px; padding: 16px 22px 18px; min-width: 260px; box-sizing: border-box;
+  background: rgba(250, 247, 240, 0.88); border-radius: 10px; opacity: 0; will-change: opacity, transform; }
+.card .ln { will-change: opacity, transform; }
+.card .no { font-weight: 500; font-size: 12px; letter-spacing: 0.18em; color: #8A7F70; display: flex; align-items: center; gap: 14px; }
+.card .no::after { content: ''; display: block; height: 1px; width: calc(46px * var(--e, 1)); background: #8A7F70; }
+.card .nm { font-weight: 600; font-size: 44px; letter-spacing: -0.01em; line-height: 1.1; margin-top: 10px; }
+.card .sz, .card .fn { font-weight: 500; font-size: 14px; letter-spacing: 0.01em; color: #3A3631; margin-top: 8px; white-space: nowrap; }
+.card .sz { margin-top: 12px; }
+
+#hint { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); margin: 0; padding: 10px 18px; border-radius: 20px;
+  background: rgba(250, 247, 240, 0.88); font-size: 13px; letter-spacing: 0.08em; color: #4A453E; transition: opacity .4s; }
+#bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(250, 247, 240, 0.25); }
+#bar i { display: block; height: 100%; width: 0; background: #FF7E5F; }
+
+/* 끝: 오른쪽 위(왼쪽 위는 방 카드) — 3D 투어 끝 장면으로 돌아간다 */
+#back3d { position: absolute; right: 56px; top: 148px; padding: 0 30px; height: 52px; display: flex; align-items: center; border-radius: 26px;
+  background: #1D1C1A; color: #F3F0E8; font: 600 15px 'Pretendard', sans-serif; text-decoration: none; opacity: 0; pointer-events: none; transition: opacity .5s, transform .5s; transform: translateY(16px); }
+#back3d.on { opacity: 1; pointer-events: auto; transform: none; }
+#back3d:focus-visible { outline: 2px solid #F3F0E8; outline-offset: 3px; }
+
+#load { position: fixed; inset: 0; display: grid; place-items: center; background: #F3F0E8; font-size: 14px; letter-spacing: 0.08em; color: #6B655C; transition: opacity .8s; z-index: 5; }
+#load.done { opacity: 0; pointer-events: none; }
+
+@media (max-width: 640px) {
+  #back3d { right: 16px; top: auto; bottom: 28px; }
+  .card { left: 16px; top: 20px; min-width: 0; padding: 12px 16px 14px; }
+  .card .nm { font-size: 30px; }
+  .card .sz, .card .fn { font-size: 12px; white-space: normal; }
+}

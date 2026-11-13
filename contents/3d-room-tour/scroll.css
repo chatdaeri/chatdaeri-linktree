@@ -1,0 +1,19 @@
+@font-face { font-family: 'Pretendard'; src: url('fonts/PretendardVariable.woff2') format('woff2'); font-weight: 100 900; font-display: block; }
+html, body { margin: 0; background: #F3F0E8; color: #1D1C1A; font-family: 'Pretendard', system-ui, sans-serif; }
+#gl, #ink { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+#ink { pointer-events: none; }
+#track { height: 2100vh; } /* 도면 → 벽 → 현관 → 주방·식당 → 거실 → 발코니 → 침실1 → 욕실 → 침실2 → 직접 걷기 */
+#load { position: fixed; inset: 0; display: grid; place-items: center; background: #F3F0E8; font-size: 14px; letter-spacing: 0.08em; color: #6B655C; transition: opacity .8s; }
+#load.done { opacity: 0; pointer-events: none; }
+#load p { margin: 0 0 14px; text-align: center; }
+#loadpct { display: inline-block; min-width: 3.2em; text-align: left; font-variant-numeric: tabular-nums; color: #1D1C1A; }
+#loadtrack { width: 200px; height: 2px; margin: 0 auto; background: rgba(29,28,26,0.12); border-radius: 1px; overflow: hidden; }
+#loadbar { display: block; height: 100%; background: #1D1C1A; transform: scaleX(0); transform-origin: left; transition: transform .35s ease-out; }
+#walk, #real { position: fixed; display: none; background: transparent; border: 0; border-radius: 26px; cursor: pointer; z-index: 3; }
+#walk:focus-visible, #real:focus-visible { outline: 2px solid #1D1C1A; outline-offset: 3px; }
+#walkui { position: fixed; left: 0; right: 0; bottom: 28px; display: none; justify-content: center; align-items: center; gap: 16px; z-index: 3; font-size: 13px; color: #4A453E; }
+#walkui p { margin: 0; padding: 10px 16px; background: rgba(250,247,240,.88); border-radius: 20px; }
+#walkui button { font: 600 13px Pretendard, sans-serif; padding: 10px 18px; border-radius: 20px; border: 0; background: #1D1C1A; color: #F3F0E8; cursor: pointer; }
+body.walking #walkui { display: flex; }
+body.walking #walk, body.walking #real { display: none !important; }
+body.walking #gl { cursor: grab; }
