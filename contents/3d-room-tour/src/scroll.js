@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import { loadLook, loadExtraTex, viewEnvironment, Post } from './look.js';
 import { House } from './house.js';
 import { Furniture } from './furniture.js';
-import { Exterior } from './exterior.js';
+import { Exterior } from './exterior.js?v=20261114c';
 import { Nav } from './nav.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const gsap = window.gsap, ScrollTrigger = window.ScrollTrigger;
 gsap.registerPlugin(ScrollTrigger);
@@ -355,10 +356,11 @@ function roomPanel(st, p, w, h) {
 }
 
 // 끝: 오른쪽 위 안내 — 실사 버전 투어(real/) 또는 여기서 직접 걷기(버튼은 같은 자리에 겹친 진짜 버튼)
-const CTA = { w: 268, h: 52, gap: 12 };
+const CTA = { w: 300, h: 52, gap: 12 };
 function endCard(P, w, h) {
   const k = smooth(0.962, 0.99, P); if (k <= 0.001 || WALK.on) return;
-  const e = 1 - Math.pow(1 - k, 3), X = w - 56 - CTA.w, Y = 148 + (1 - e) * 16, Y2 = Y + CTA.h + CTA.gap; // 오른쪽 위(빈 벽 쪽): 아래에 두면 책장과 맞닿았다
+  const narrow = w < 760; CTA.w = narrow ? Math.min(300, w - 48) : 300; // 휴대폰: 방 이름 카드 아래 가운데로
+  const e = 1 - Math.pow(1 - k, 3), X = narrow ? (w - CTA.w) / 2 : w - 56 - CTA.w, Y = (narrow ? 300 : 148) + (1 - e) * 16, Y2 = Y + CTA.h + CTA.gap; // 오른쪽 위(빈 벽 쪽): 아래에 두면 책장과 맞닿았다
   g.globalAlpha = e; g.textAlign = 'left'; g.textBaseline = 'top';
   g.fillStyle = '#8A7F70'; g.font = '500 12px Pretendard'; g.letterSpacing = '0.18em'; g.fillText('THE END OF THE TOUR', X, Y - 58); g.letterSpacing = '0px';
   g.fillStyle = inkHex; g.font = '600 26px Pretendard'; g.fillText('이제 직접 걸어 보세요', X, Y - 38);
@@ -367,7 +369,12 @@ function endCard(P, w, h) {
   g.font = '600 15px Pretendard'; g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillStyle = '#F3F0E8'; g.fillText('실사 버전으로 투어하기  →', X + CTA.w / 2, Y + CTA.h / 2 + 1);
   g.fillStyle = '#1D1C1A'; g.fillText('직접 걸어 보기  →', X + CTA.w / 2, Y2 + CTA.h / 2 + 1);
-  CTA.x = X; CTA.y = Y; CTA.y2 = Y2; CTA.alpha = e;
+  // 뉴스레터 구독 안내(새 탭으로 구독 화면)
+  const Y3 = Y2 + CTA.h + 40;
+  g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = '#4A453E'; g.font = '500 14px Pretendard'; g.fillText('이런 웹사이트 만들고 싶다면?', X + 4, Y3 - 10);
+  g.fillStyle = '#FF7E5F'; g.beginPath(); g.roundRect(X, Y3, CTA.w, CTA.h, 26); g.fill();
+  g.fillStyle = '#FFFFFF'; g.font = '600 15px Pretendard'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('뉴스레터 구독하고 가이드 PDF 받기  →', X + CTA.w / 2, Y3 + CTA.h / 2 + 1);
+  CTA.x = X; CTA.y = Y; CTA.y2 = Y2; CTA.y3 = Y3; CTA.alpha = e;
 }
 
 // ---- 직접 걸어 보기: 끌기 = 둘러보기 · 방향키/WASD = 걷기(Shift 빠르게) · 바닥 클릭 = 그 자리로. 카메라 칸(camNav) 밖으로는 못 나간다 ----
@@ -384,7 +391,7 @@ function walkEnter() {
   }
   document.body.classList.add('walking'); window.__lenis?.stop();
 }
-function walkExit() { WALK.on = false; document.body.classList.remove('walking'); window.__lenis?.start(); window.__lenis?.scrollTo(0, { immediate: false, duration: 2.4 }); }
+function walkExit() { if (TOP.on) { TOP.fly?.kill(); TOP.fly = null; TOP.on = false; orbit.enabled = false; R.domElement.style.touchAction = ''; document.body.classList.remove('topview'); topBtn.textContent = '위에서 보기'; if (walkHelp) walkHelp.textContent = HELP[0]; } WALK.on = false; document.body.classList.remove('walking'); window.__lenis?.start(); window.__lenis?.scrollTo(0, { immediate: false, duration: 2.4 }); }
 function walkStep(dt) {
   const k = WALK.keys, fwd = (k.has('w') || k.has('arrowup') ? 1 : 0) - (k.has('s') || k.has('arrowdown') ? 1 : 0);
   const side = (k.has('d') ? 1 : 0) - (k.has('a') ? 1 : 0), turn = (k.has('arrowleft') ? 1 : 0) - (k.has('arrowright') ? 1 : 0);
@@ -402,16 +409,84 @@ function walkStep(dt) {
   camera.up.set(0, 1, 0); camera.lookAt(P0.x + Math.sin(WALK.yaw) * cp, P0.y + Math.sin(WALK.pitch), P0.z + Math.cos(WALK.yaw) * cp);
 }
 function walkFrame(dt) {
-  walkStep(dt);
+  if (TOP.on) { if (!TOP.fly) orbit.update(); } else walkStep(dt);
   for (const k in prog) prog[k] = 1; slots.forEach((s, i) => { U.uProg.value[i] = 1; }); U.uOut.value = 1;
-  house.group.scale.y = 1; clip.constant = 1e4; caps.visible = false; house.ceilings.visible = true; for (const m of extCeil) m.visible = true;
-  ext.group.visible = true; for (const s of sky) s.visible = true; post.ao.blendIntensity = 0.8; post.bloom.enabled = true; ext.update?.(camera);
+  const camLow = camera.position.y < H + 0.15; // 위에서 보기: 천장·위층 바닥을 걷어 내고, 집 밖 하늘 대신 종이
+  house.group.scale.y = 1; clip.constant = 1e4; caps.visible = false; house.ceilings.visible = !TOP.on; for (const m of extCeil) m.visible = !TOP.on;
+  ext.group.visible = true; for (const s of sky) s.visible = camLow; scene.background.copy(PAPER);
+  youMark.visible = TOP.on; if (TOP.on) { youMark.position.set(TOP.pos.x, 0.03, TOP.pos.z); youMark.rotation.y = TOP.yaw; } post.ao.blendIntensity = 0.8; post.bloom.enabled = true; ext.update?.(camera);
   post.render(dt);
   const w = ink.clientWidth, h = ink.clientHeight; g.setTransform(ink.width / w, 0, 0, ink.width / w, 0, 0); g.clearRect(0, 0, w, h);
-  const here = named.find(r => r.rects.some(q => camera.position.x >= q[0] - 0.1 && camera.position.x <= q[2] + 0.1 && camera.position.z >= q[1] - 0.1 && camera.position.z <= q[3] + 0.1));
+  const me = TOP.on ? TOP.pos : camera.position, here = named.find(r => r.rects.some(q => me.x >= q[0] - 0.1 && me.x <= q[2] + 0.1 && me.z >= q[1] - 0.1 && me.z <= q[3] + 0.1));
+  drawMini(me, TOP.on ? TOP.yaw : WALK.yaw);
   g.globalAlpha = 1; g.textAlign = 'left'; g.textBaseline = 'top';
+  if (here) { g.fillStyle = 'rgba(250,247,240,0.92)'; g.beginPath(); g.roundRect(40, 42, 300, 106, 14); g.fill(); } // 방 이름 카드(위에서 보기의 잔디 위에서도 읽히게)
   if (here) { const a = here.stated ?? here.area; g.fillStyle = inkHex; g.font = '600 30px Pretendard'; g.fillText(NAME[here.name] ?? here.name, 56, 60); g.fillStyle = '#4A453E'; g.font = '400 14px Pretendard'; g.fillText(`${a.toFixed(1)}㎡ · ${(a / 3.3058).toFixed(1)}평`, 56, 100); g.fillStyle = '#7A7064'; g.fillText(ROOM_INFO[here.name] ?? '', 56, 122); }
 }
+// ---- 걷기 화면 왼쪽 평면도(미니맵): 지금 자리 · 보는 방향. 누르면 그 자리로 걸어간다 ----
+const mini = document.getElementById('mini'), mg = mini.getContext('2d'), miniImg = new Image(); miniImg.src = 'plan.png?v=20261114';
+const PP = S.plan, CROP = [70, 118, 756, 559]; // 평면도 그림에서 집만(치수선 빼고) 잘라 보여 준다
+let miniK = null;
+function drawMini(me, yaw) {
+  if (!miniImg.complete || !miniImg.naturalWidth) return;
+  const dpr = Math.min(2, devicePixelRatio), cw = mini.clientWidth, ch = mini.clientHeight; if (!cw) return;
+  if (mini.width !== Math.round(cw * dpr) || mini.height !== Math.round(ch * dpr)) { mini.width = Math.round(cw * dpr); mini.height = Math.round(ch * dpr); }
+  const [x0, y0, x1, y1] = CROP, s = Math.min(cw / (x1 - x0), ch / (y1 - y0)), ox = (cw - (x1 - x0) * s) / 2, oy = (ch - (y1 - y0) * s) / 2;
+  miniK = { s, ox, oy };
+  mg.setTransform(dpr, 0, 0, dpr, 0, 0); mg.clearRect(0, 0, cw, ch);
+  mg.imageSmoothingQuality = 'high'; mg.drawImage(miniImg, x0, y0, x1 - x0, y1 - y0, ox, oy, (x1 - x0) * s, (y1 - y0) * s);
+  const x = ox + (PP.origin[0] + me.x * PP.ppm - x0) * s, y = oy + (PP.origin[1] + me.z * PP.ppm - y0) * s, a = Math.atan2(Math.cos(yaw), Math.sin(yaw));
+  const gr = mg.createRadialGradient(x, y, 2, x, y, 30); gr.addColorStop(0, 'rgba(255,126,95,0.55)'); gr.addColorStop(1, 'rgba(255,126,95,0)');
+  mg.fillStyle = gr; mg.beginPath(); mg.moveTo(x, y); mg.arc(x, y, 30, a - 0.55, a + 0.55); mg.closePath(); mg.fill(); // 보는 방향
+  mg.fillStyle = '#FF7E5F'; mg.strokeStyle = '#FFFFFF'; mg.lineWidth = 2; mg.beginPath(); mg.arc(x, y, 5.5, 0, Math.PI * 2); mg.fill(); mg.stroke();
+}
+// 위에서 보기에서 사람이 서 있는 자리(바닥 위 주황 점 + 보는 방향)
+const youMark = new THREE.Group(); youMark.visible = false; youMark.renderOrder = 9; scene.add(youMark);
+{ const m = new THREE.MeshBasicMaterial({ color: 0xFF7E5F, toneMapped: false, depthTest: false, transparent: true });
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.16, 40).rotateX(-Math.PI / 2), m); dot.renderOrder = 9;
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.21, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xFFFFFF, toneMapped: false, depthTest: false, transparent: true })); ring.renderOrder = 9;
+  const tri = new THREE.Shape([new THREE.Vector2(-0.13, 0.26), new THREE.Vector2(0.13, 0.26), new THREE.Vector2(0, 0.5)]);
+  const arrow = new THREE.Mesh(new THREE.ShapeGeometry(tri).rotateX(Math.PI / 2), m); arrow.renderOrder = 9; // +z 쪽(보는 방향)을 가리킨다
+  youMark.add(dot, ring, arrow); youMark.traverse(o => { o.raycast = () => {}; }); }
+// 위에서 보기: 끌기 = 돌려 보기 · 휠 = 확대·축소. 다시 걷기를 누르면 서 있던 자리로 내려온다
+const orbit = new OrbitControls(camera, R.domElement);
+orbit.enabled = false; orbit.enableDamping = true; orbit.dampingFactor = 0.08; orbit.enablePan = false; orbit.target.copy(C);
+R.domElement.style.touchAction = ''; // 위에서 보기 때만 끈다(평소에는 휴대폰에서 이 캔버스 위로 스크롤해야 한다)
+orbit.minPolarAngle = 0.12; orbit.maxPolarAngle = 1.2; orbit.minDistance = 6; orbit.maxDistance = 24;
+const TOP = { on: false, fly: null, pos: V(0, 0, 0), yaw: 0, pitch: 0 };
+const topBtn = document.getElementById('topview'), walkHelp = document.querySelector('#walkui p'), HELP = [walkHelp?.textContent, '끌기 = 돌려 보기 · 휠 = 확대·축소 · 평면도 클릭 = 그 자리로'];
+function fly(to, look1, fov1, dur, done) { // 위로 먼저 솟았다가(천장을 뚫고 비스듬히 나가지 않게) 목표로
+  const from = camera.position.clone(), d = new THREE.Vector3(); camera.getWorldDirection(d);
+  const look0 = from.clone().addScaledVector(d, 3), fov0 = camera.fov, mid = V(lerp(from.x, to.x, 0.25), Math.max(from.y, to.y), lerp(from.z, to.z, 0.25)), o = { k: 0 }, lk = V(0, 0, 0);
+  TOP.fly?.kill(); orbit.enabled = false; camera.near = 0.05; camera.far = 600;
+  TOP.fly = gsap.to(o, { k: 1, duration: dur, ease: 'power3.inOut', onUpdate: () => {
+    const t = o.k, u = 1 - t; camera.position.set(u * u * from.x + 2 * u * t * mid.x + t * t * to.x, u * u * from.y + 2 * u * t * mid.y + t * t * to.y, u * u * from.z + 2 * u * t * mid.z + t * t * to.z);
+    camera.up.set(0, 1, 0); lk.lerpVectors(look0, look1, ease(Math.min(1, t * 1.15))); camera.lookAt(lk); camera.fov = lerp(fov0, fov1, t); camera.updateProjectionMatrix();
+  }, onComplete: () => { TOP.fly = null; done?.(); } });
+}
+function topEnter() {
+  if (TOP.on) return; TOP.on = true; WALK.path = null; WALK.keys.clear();
+  TOP.pos.copy(camera.position); TOP.yaw = WALK.yaw; TOP.pitch = WALK.pitch;
+  const EL = THREE.MathUtils.degToRad(52), DIST = Math.max(13.5, 11 / (0.77 * camera.aspect)), to = C.clone().addScaledVector(aerialDir, Math.cos(EL) * DIST); to.y = Math.sin(EL) * DIST;
+  orbit.maxDistance = Math.max(24, DIST * 1.3); orbit.target.copy(C); R.domElement.style.touchAction = 'none'; fly(to, C, 42, 1.7, () => { orbit.enabled = true; orbit.update(); });
+  document.body.classList.add('topview'); topBtn.textContent = '다시 걷기'; if (walkHelp) walkHelp.textContent = HELP[1];
+}
+function topExit(then) {
+  if (!TOP.on) { then?.(); return; }
+  const to = V(TOP.pos.x, EYE, TOP.pos.z), cp = Math.cos(TOP.pitch), look = V(to.x + Math.sin(TOP.yaw) * cp * 3, EYE + Math.sin(TOP.pitch) * 3, to.z + Math.cos(TOP.yaw) * cp * 3);
+  fly(to, look, 66, 1.6, () => { TOP.on = false; R.domElement.style.touchAction = ''; WALK.yaw = TOP.yaw; WALK.pitch = TOP.pitch; camera.position.copy(to); then?.(); });
+  document.body.classList.remove('topview'); topBtn.textContent = '위에서 보기'; if (walkHelp) walkHelp.textContent = HELP[0];
+}
+function walkTo(x, z) {
+  const path = walkNav.find(camera.position.x, camera.position.z, x, z); if (!path) return;
+  WALK.path = path.slice(1).map(([px, pz]) => camNav.nearest(px, pz, 6) ?? [px, pz]);
+}
+mini.addEventListener('click', e => {
+  if (!miniK || TOP.fly) return; const r = mini.getBoundingClientRect();
+  const x = ((e.clientX - r.left - miniK.ox) / miniK.s + CROP[0] - PP.origin[0]) / PP.ppm, z = ((e.clientY - r.top - miniK.oy) / miniK.s + CROP[1] - PP.origin[1]) / PP.ppm;
+  topExit(() => walkTo(x, z));
+});
+
 function walkClick(ev) { // 바닥을 누르면 그 자리까지 길을 찾아 걸어간다
   const r = R.domElement.getBoundingClientRect(), m = new THREE.Vector2((ev.clientX - r.left) / r.width * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
   const rc = new THREE.Raycaster(); rc.setFromCamera(m, camera); const hit = rc.intersectObjects(house.floors, false)[0]; if (!hit) return;
@@ -516,12 +591,12 @@ if (REC && Q.get('walk')) { // 걷기 모드 확인 녹화(?record=N&walk=1): �
   if (location.hash === '#end') { history.scrollRestoration = 'manual'; lenis.scrollTo(document.documentElement.scrollHeight, { immediate: true }); target = shown = 1; } // 실사 투어에서 돌아올 때: 끝 장면에서 바로
   const fix = Q.get('p'); // 확인용: ?p=0.5 → 그 지점에서 멈춘 장면
   window.__lenis = lenis;
-  const btn = document.getElementById('walk'), real = document.getElementById('real'), back = document.getElementById('back');
-  btn.addEventListener('click', walkEnter); back.addEventListener('click', walkExit);
-  addEventListener('keydown', e => { if (!WALK.on) return; const k = e.key.toLowerCase(); WALK.keys.add(k === 'shift' ? 'shift' : k); if (k.startsWith('arrow') || k === ' ') e.preventDefault(); if (k === 'escape') walkExit(); });
+  const btn = document.getElementById('walk'), real = document.getElementById('real'), nl = document.getElementById('nl'), back = document.getElementById('back');
+  btn.addEventListener('click', walkEnter); back.addEventListener('click', walkExit); topBtn.addEventListener('click', () => (TOP.on ? topExit() : topEnter()));
+  addEventListener('keydown', e => { if (!WALK.on) return; if (TOP.on) { if (e.key === 'Escape') walkExit(); return; } const k = e.key.toLowerCase(); WALK.keys.add(k === 'shift' ? 'shift' : k); if (k.startsWith('arrow') || k === ' ') e.preventDefault(); if (k === 'escape') walkExit(); });
   addEventListener('keyup', e => { WALK.keys.delete(e.key.toLowerCase()); });
   let drag = null;
-  R.domElement.addEventListener('pointerdown', e => { if (!WALK.on) return; drag = { x: e.clientX, y: e.clientY, moved: 0 }; R.domElement.setPointerCapture(e.pointerId); });
+  R.domElement.addEventListener('pointerdown', e => { if (!WALK.on || TOP.on) return; drag = { x: e.clientX, y: e.clientY, moved: 0 }; R.domElement.setPointerCapture(e.pointerId); });
   R.domElement.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved += Math.abs(dx) + Math.abs(dy); drag.x = e.clientX; drag.y = e.clientY;
     WALK.yaw -= dx * 0.0042; WALK.pitch = THREE.MathUtils.clamp(WALK.pitch - dy * 0.0036, -1.1, 0.9); WALK.path = null; });
   R.domElement.addEventListener('pointerup', e => { if (drag && drag.moved < 6) walkClick(e); drag = null; });
@@ -531,9 +606,10 @@ if (REC && Q.get('walk')) { // 걷기 모드 확인 녹화(?record=N&walk=1): �
     const now = performance.now(), dt = Math.min(0.05, (now - tPrev) / 1000); tPrev = now;
     if (WALK.on) { walkFrame(dt); return; }
     if (fix != null) { frame(+fix); return; } shown += (target - shown) * 0.12; if (Math.abs(target - shown) < 1e-4) shown = target; frame(shown);
-    const on = shown > 0.975 && CTA.x != null; btn.style.display = real.style.display = on ? 'block' : 'none';
+    const on = shown > 0.975 && CTA.x != null; btn.style.display = real.style.display = nl.style.display = on ? 'block' : 'none';
     if (on) { Object.assign(real.style, { left: CTA.x + 'px', top: CTA.y + 'px', width: CTA.w + 'px', height: CTA.h + 'px' });
-      Object.assign(btn.style, { left: CTA.x + 'px', top: CTA.y2 + 'px', width: CTA.w + 'px', height: CTA.h + 'px' }); }
+      Object.assign(btn.style, { left: CTA.x + 'px', top: CTA.y2 + 'px', width: CTA.w + 'px', height: CTA.h + 'px' });
+      Object.assign(nl.style, { left: CTA.x + 'px', top: CTA.y3 + 'px', width: CTA.w + 'px', height: CTA.h + 'px' }); }
   });
   window.__frame = frame; window.__walk = { enter: walkEnter, exit: walkExit, W: WALK, click: walkClick, cam: camera };
 }

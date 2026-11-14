@@ -9,11 +9,16 @@ html, body { margin: 0; background: #F3F0E8; color: #1D1C1A; font-family: 'Prete
 #loadpct { display: inline-block; min-width: 3.2em; text-align: left; font-variant-numeric: tabular-nums; color: #1D1C1A; }
 #loadtrack { width: 200px; height: 2px; margin: 0 auto; background: rgba(29,28,26,0.12); border-radius: 1px; overflow: hidden; }
 #loadbar { display: block; height: 100%; background: #1D1C1A; transform: scaleX(0); transform-origin: left; transition: transform .35s ease-out; }
-#walk, #real { position: fixed; display: none; background: transparent; border: 0; border-radius: 26px; cursor: pointer; z-index: 3; }
-#walk:focus-visible, #real:focus-visible { outline: 2px solid #1D1C1A; outline-offset: 3px; }
+#walk, #real, #nl { position: fixed; display: none; background: transparent; border: 0; border-radius: 26px; cursor: pointer; z-index: 3; }
+#walk:focus-visible, #real:focus-visible, #nl:focus-visible { outline: 2px solid #1D1C1A; outline-offset: 3px; }
 #walkui { position: fixed; left: 0; right: 0; bottom: 28px; display: none; justify-content: center; align-items: center; gap: 16px; z-index: 3; font-size: 13px; color: #4A453E; }
 #walkui p { margin: 0; padding: 10px 16px; background: rgba(250,247,240,.88); border-radius: 20px; }
 #walkui button { font: 600 13px Pretendard, sans-serif; padding: 10px 18px; border-radius: 20px; border: 0; background: #1D1C1A; color: #F3F0E8; cursor: pointer; }
 body.walking #walkui { display: flex; }
-body.walking #walk, body.walking #real { display: none !important; }
-body.walking #gl { cursor: grab; }
+#mini { position: fixed; right: 40px; top: 42px; width: 300px; height: 193px; display: none; z-index: 3; cursor: pointer; background: rgba(250,247,240,.92); border-radius: 14px; box-shadow: 0 0 0 1px rgba(29,28,26,.14); }
+body.walking #mini { display: block; }
+#walkui #topview { background: rgba(250,247,240,.92); color: #1D1C1A; box-shadow: inset 0 0 0 1.5px #1D1C1A; }
+body.topview #gl { cursor: grab; }
+@media (max-width: 760px) { body.walking #mini { display: none; } /* 휴대폰: 평면도 없이 */ #walkui { flex-wrap: wrap; } #walkui p { display: none; } }
+body.walking #walk, body.walking #real, body.walking #nl { display: none !important; }
+body.walking #gl { cursor: grab; touch-action: none; } /* 휴대폰: 끌기 = 둘러보기(페이지가 스크롤되지 않게) */

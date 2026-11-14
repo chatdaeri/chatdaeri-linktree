@@ -6,22 +6,24 @@
 <script>if(!location.pathname.endsWith("/"))location.replace(location.pathname+"/"+location.search+location.hash)</script>
 <title>2룸 아파트 · 평면도에서 집으로</title>
 <link rel="stylesheet" href="vendor/motion/lenis.css">
-<link rel="stylesheet" href="scroll.css?v=20261114">
+<link rel="stylesheet" href="scroll.css?v=20261114d">
 <script src="vendor/motion/gsap.min.js"></script>
 <script src="vendor/motion/ScrollTrigger.min.js"></script>
 <script src="vendor/motion/lenis.min.js"></script>
 <script type="importmap">
 { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
 </script>
-<script type="module" src="src/scroll.js?v=20261114"></script>
+<script type="module" src="src/scroll.js?v=20261114d"></script>
 </head>
 <body>
 <canvas id="gl"></canvas>
 <canvas id="ink"></canvas>
 <div id="track"></div>
 <a id="real" href="real/" aria-label="실사 버전으로 투어하기"></a>
+<a id="nl" href="https://blog.chatdaeri.com/#/portal/signup?ref=chatdaericontents" target="_blank" rel="noopener" aria-label="이런 웹사이트 만들고 싶다면? 뉴스레터 구독하고 가이드 PDF 받기"></a>
 <button id="walk" aria-label="직접 걸어 보기"></button>
-<div id="walkui"><p>끌기 = 둘러보기 · 방향키/WASD = 걷기(Shift 빠르게) · 바닥 클릭 = 그 자리로</p><button id="back">↑ 처음부터 다시 보기</button></div>
+<canvas id="mini" aria-label="평면도(누르면 그 자리로 걸어갑니다)"></canvas>
+<div id="walkui"><p>끌기 = 둘러보기 · 방향키/WASD = 걷기(Shift 빠르게) · 바닥·평면도 클릭 = 그 자리로</p><button id="topview">위에서 보기</button><button id="back">↑ 처음부터 다시 보기</button></div>
 <div id="load"><div><p>평면도를 펼치는 중 <span id="loadpct">0%</span></p><div id="loadtrack"><i id="loadbar"></i></div></div></div>
 </body>
 </html>

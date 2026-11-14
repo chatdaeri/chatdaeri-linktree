@@ -38,12 +38,9 @@ export class Exterior {
     if (grass) { grass.wrapS = grass.wrapT = THREE.RepeatWrapping; grass.repeat.set(150, 150); }
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: grass, color: grass ? 0xFFFFFF : 0x6E8F4E, roughness: 0.95 }));
     ground.position.set(W / 2, gy, D / 2); ground.receiveShadow = true; this.group.add(ground);
-    // 아래층 건물 몸통(이 집 바닥 아래 ~ 땅) + 층 사이 띠
-    const facade = new THREE.MeshStandardMaterial({ color: 0xE9E4DA, roughness: 0.85 });
-    const podium = new THREE.Mesh(new THREE.BoxGeometry(W + 0.4, -gy - 0.06, D + 0.4), facade);
-    podium.position.set(W / 2, gy + (-gy - 0.06) / 2, D / 2); podium.castShadow = podium.receiveShadow = true; this.group.add(podium);
+    // 2층 높이에 떠 있는 집: 아래층 건물 몸통(받침)은 짓지 않고, 바닥판(25cm)만 둔다. 그림자는 땅에 떨어진다
     const band = new THREE.Mesh(new THREE.BoxGeometry(W + 0.5, 0.25, D + 0.5), new THREE.MeshStandardMaterial({ color: 0xCFC8BC, roughness: 0.8 }));
-    band.position.set(W / 2, -0.18, D / 2); this.group.add(band);
+    band.position.set(W / 2, -0.18, D / 2); band.castShadow = band.receiveShadow = true; this.group.add(band);
     // 산책길: 건물 둘레 6m 밖으로 1.6m 폭 띠
     if (paver) { paver.wrapS = paver.wrapT = THREE.RepeatWrapping; }
     const pathMat = new THREE.MeshStandardMaterial({ map: paver, color: paver ? 0xFFFFFF : 0xB8AE9F, roughness: 0.9 });
