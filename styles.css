@@ -47,7 +47,7 @@ body {
   text-decoration: none; text-align: center; font-size: 16px; font-weight: 700;
   transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
 }
-.link-card.primary { border-color: var(--coral); background: var(--coral); color: #fff; }
+.link-card.primary { border-color: var(--coral); background: var(--coral); color: var(--ink); }
 .link-card:hover, .link-card:focus-visible { background: var(--ink); border-color: var(--ink); color: #fff; transform: translateY(-2px); }
 .link-card span { font-size: 18px; font-weight: 400; }
 .footer { margin-top: 42px; text-align: center; }
