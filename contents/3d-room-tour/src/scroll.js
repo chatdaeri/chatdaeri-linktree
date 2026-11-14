@@ -220,7 +220,7 @@ const walkIn = new THREE.CatmullRomCurve3([doorOut.clone(), V(9.3, 1.6, 2.7), V(
 const toKitchen = new THREE.CatmullRomCurve3([V(8.45, 1.6, 2.58), V(7.85, 1.6, 2.5), V(7.5, 1.58, 2.68)]);
 const lookKitchen = new THREE.CatmullRomCurve3([V(6.8, 1.4, 2.35), V(5.9, 1.2, 1.7), V(5.2, 1.05, 1.25)]);
 const PL = S.plan, IMGW = PL.size[0] / PL.ppm, IMGD = PL.size[1] / PL.ppm, IMG0 = [-PL.origin[0] / PL.ppm, -PL.origin[1] / PL.ppm]; // 평면도 그림이 덮는 범위(m)
-{ const t = await new THREE.TextureLoader().loadAsync('plan-bw.png'); t.colorSpace = THREE.NoColorSpace; t.anisotropy = 8; U.uPlan.value = t; U.uPlanXf.value.set(IMG0[0], IMG0[1], IMGW, IMGD); }
+{ const t = await new THREE.TextureLoader().loadAsync('plan-bw.png?v=20261114'); t.colorSpace = THREE.NoColorSpace; t.anisotropy = 8; U.uPlan.value = t; U.uPlanXf.value.set(IMG0[0], IMG0[1], IMGW, IMGD); }
 let halfPlan = 4;
 function planFrame(aspect) { halfPlan = Math.max((IMGW + 0.6) / 2 / aspect, (IMGD + 1.4) / 2); }
 const look = V(0, 0, 0), pos = V(0, 0, 0), up = V(0, 1, 0);
@@ -276,9 +276,9 @@ function cameraAt(P) {
 
 // ---- 잉크 겹 그림(방 이름·면적·치수 숫자·도면 틀·장소 이름): 2D 캔버스. 녹화 때 3D 화면과 합친다 ----
 const ink = document.getElementById('ink'), g = ink.getContext('2d');
-const planImg = new Image(); planImg.src = 'plan-bw.png'; await planImg.decode();
+const planImg = new Image(); planImg.src = 'plan-bw.png?v=20261114'; await planImg.decode();
 const inkHex = '#1D1C1A', subHex = '#6B655C', paperHex = '#F3F0E8';
-const PLAN_IMG = true; // 처음 도면 = 네이버 평면도 그림(false면 모델에서 그린 이름·치수)
+const PLAN_IMG = true; // 처음 도면 = 다시 그린 평면도 그림(false면 모델에서 그린 이름·치수)
 const NAME = { '주방및식당': '주방 · 식당' }, LABEL = { '발코니': [1.15, 0, 4.35], '침실1': [3.25, 0, 3.0] }; // 표기 이름 · 가구와 겹치지 않는 표기 자리
 const proj = v => { const q = v.clone().project(camera); return [(q.x + 1) / 2 * ink.clientWidth, (1 - q.y) / 2 * ink.clientHeight, q.z]; };
 function drawInk(P) {
