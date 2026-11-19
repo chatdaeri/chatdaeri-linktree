@@ -524,11 +524,43 @@ document.querySelectorAll('.yt-play').forEach(a => a.addEventListener('click', e
       return r.ok;
     } catch (_) { return false; }
   };
-  const done = text => { msg.textContent = text; btn.disabled = true; form.querySelectorAll('input').forEach(i => { i.disabled = true; }); };
+  // 접수가 끝나면 카드 안을 비우고 안내 문구만 남긴다
+  // 뉴스레터 동의 시: 구독 확인 단계 안내
+  const NEWS = {
+    lead: '한 가지 더! 뉴스레터는 다음을 해 주셔야 정상 구독 처리됩니다.',
+    steps: ['메일함 열기', '가입 완료 요청 메일 열기 (보낸 메일 주소: noreply@blog.chatdaeri.com)', '회원가입 확인 버튼 클릭'],
+    notes: ['*만약 메일이 도착하지 않았다면 스팸 메일함을 확인해 주세요.', '신규 구독자에게는 웰컴 메일로 풍성한 AI 활용법 자료를 선물로 보내 드립니다 :)']
+  };
+  const DONE = {
+    ok: ['알림 신청이 정상 접수되었습니다.', '메일함을 확인해 주세요.'],
+    okNews: ['알림 신청이 정상 접수되었습니다.', NEWS],
+    okNewsFail: ['알림 신청이 정상 접수되었습니다.', '뉴스레터 구독 확인 메일은 보내지 못했어요. blog.chatdaeri.com에서 다시 구독해 주세요.'],
+    dup: ['이미 알림 신청하신 이메일입니다.', '오픈하면 이 주소로 알려 드릴게요.'],
+    dupNews: ['이미 알림 신청하신 이메일입니다.', NEWS],
+    dupNewsFail: ['이미 알림 신청하신 이메일입니다.', '뉴스레터 구독 확인 메일은 보내지 못했어요. blog.chatdaeri.com에서 다시 구독해 주세요.']
+  };
+  const done = kind => {
+    const [h, p] = DONE[kind];
+    const box = document.createElement('div'); box.className = 'f-done'; box.setAttribute('role', 'status');
+    const t = document.createElement('p'); t.className = 'f-done-h'; t.textContent = h;
+    box.append(t);
+    const el = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; n.textContent = text; return n; };
+    if (typeof p === 'string') box.append(el('p', 'f-done-p', p));
+    else {
+      box.append(el('p', 'f-done-p', p.lead));
+      const ol = document.createElement('ol'); ol.className = 'f-done-steps';
+      p.steps.forEach(x => ol.append(el('li', '', x)));
+      box.append(ol, ...p.notes.map(x => el('p', 'f-done-note', x)));
+    } form.replaceChildren(box); form.classList.add('is-done');
+  };
+  // 로컬 미리보기 전용: index-final.html?done=ok 처럼 열면 완료 화면을 바로 보여 준다
+  if (/^(127\.0\.0\.1|localhost|host\.docker\.internal)$/.test(location.hostname)) {
+    const k = new URLSearchParams(location.search).get('done'); if (k && DONE[k]) done(k);
+  }
   form.addEventListener('submit', async e => {
     e.preventDefault();
     if (!form.checkValidity()) { msg.textContent = '이메일·휴대전화 번호와 필수 동의 항목을 확인해 주세요.'; form.reportValidity(); return; }
-    if (form.website.value) { done('오픈 알림 신청이 접수되었습니다.'); return; }
+    if (form.website.value) { done('ok'); return; }
     const token = (window.turnstile && tsId !== null) ? turnstile.getResponse(tsId) : '';
     if (!token) { msg.textContent = '자동 확인을 진행하고 있습니다. 잠시 후 다시 눌러 주세요.'; return; }
     const body = {
@@ -545,18 +577,10 @@ document.querySelectorAll('.yt-play').forEach(a => a.addEventListener('click', e
     try {
       const r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const res = await r.json().catch(() => ({}));
-      const ghostFail = ' 뉴스레터 구독 확인 메일은 보내지 못했어요. blog.chatdaeri.com에서 다시 구독해 주세요.';
-      if (r.ok && res.status === 'created') {
-        if (!res.newsletter) return done('오픈 알림 신청이 접수되었습니다. 접수 확인 메일을 보내 드렸어요.');
-        return done(await ghostSignup(body.email)
-          ? '알림 신청과 뉴스레터 구독 신청 감사합니다. 메일로 도착한 구독 확인 버튼을 누르면 웰컴 메일을 보내 드립니다.'
-          : '오픈 알림 신청이 접수되었습니다.' + ghostFail);
-      }
-      if (r.ok && res.status === 'duplicate') {
-        if (!res.newsletter) return done('이미 신청하신 이메일입니다. 오픈하면 알려 드릴게요.');
-        return done(await ghostSignup(body.email)
-          ? '이미 오픈 알림을 신청하셨어요. 뉴스레터 구독 확인 메일을 보내 드렸습니다.'
-          : '이미 오픈 알림을 신청하셨어요.' + ghostFail);
+      if (r.ok && (res.status === 'created' || res.status === 'duplicate')) {
+        const base = res.status === 'created' ? 'ok' : 'dup';
+        if (!res.newsletter) return done(base);
+        return done(base + (await ghostSignup(body.email) ? 'News' : 'NewsFail'));
       }
       const text = {
         email: '이메일 주소를 확인해 주세요.',

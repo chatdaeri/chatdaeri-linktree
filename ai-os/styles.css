@@ -269,6 +269,12 @@ kbd { font: 600 11px/1 var(--mono); padding: 3px 5px; border-radius: 4px; backgr
 .f-hint:empty { display: none; }
 .f-ts { grid-column: 1 / -1; }
 .f-ts:empty { display: none; }
+.form.is-done { display: block; padding: 44px 32px; text-align: center; }
+.f-done-h { margin: 0 0 10px; font: 700 22px/1.4 var(--font); color: var(--ink); }
+.f-done-p { margin: 0 auto; max-width: 460px; word-break: keep-all; text-wrap: balance; font-size: 15px; line-height: 1.65; color: var(--ink-2); }
+.f-done-steps { display: inline-grid; gap: 8px; margin: 16px auto 14px; padding: 16px 22px 16px 40px; text-align: left; font-size: 14.5px; line-height: 1.5; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.f-done-steps li::marker { font-weight: 700; color: var(--accent-ink); }
+.f-done-note { margin: 4px auto 0; max-width: 480px; font-size: 13px; line-height: 1.6; color: var(--ink-3); word-break: keep-all; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 .foot { padding: 32px 0 96px; font-size: 13px; color: var(--ink-3); border-top: 1.5px solid var(--ink); }
