@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8.0 -8.0 592.0 316.0" width="592" height="316">
+  <!-- Claw'd · 16x5 픽셀 그리드 · 픽셀 36x60px · 원점 = 그리드 왼쪽 위 -->
+  <g id="legs" shape-rendering="crispEdges">
+    <rect x="108.00" y="240.00" width="36.00" height="60.00" fill="#D97757"/>
+    <rect x="180.00" y="240.00" width="36.00" height="60.00" fill="#D97757"/>
+    <rect x="360.00" y="240.00" width="36.00" height="60.00" fill="#D97757"/>
+    <rect x="432.00" y="240.00" width="36.00" height="60.00" fill="#D97757"/>
+  </g>
+  <g id="body" shape-rendering="crispEdges">
+    <rect x="72.00" y="0.00" width="432.00" height="240.00" fill="#D97757"/>
+    <rect x="0.00" y="120.00" width="576.00" height="60.00" fill="#D97757"/>
+  </g>
+  <g id="eyes" shape-rendering="crispEdges">
+    <rect id="eye-left" x="144.00" y="60.00" width="36.00" height="60.00" fill="#1F1A17"/>
+    <rect id="eye-right" x="396.00" y="60.00" width="36.00" height="60.00" fill="#1F1A17"/>
+  </g>
+</svg>
