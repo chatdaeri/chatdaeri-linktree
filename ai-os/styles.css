@@ -66,6 +66,7 @@ kbd { font: 600 11px/1 var(--mono); padding: 3px 5px; border-radius: 4px; backgr
 .hero-dates dt { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .hero-dates dd { margin: 0; font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--ink); }
 .eyebrow.eyebrow-lg { font-size: 16px; }
+.date-note { margin: 8px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-3); word-break: keep-all; }
 .apply-date { margin-top: 10px; font-size: 17px; font-weight: 700; color: var(--ink); }
 .hero-sub { margin-top: 18px; font-size: clamp(18px, 1.8vw, 22px); font-weight: 600; color: var(--ink-2); }
 .hero-cta { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; }
