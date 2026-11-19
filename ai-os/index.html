@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클로드 코드로 만드는 AI 에이전트 시스템 — 베타 사전 신청 | 챗대리</title>
+<meta name="description" content="스킬 · 세컨드 브레인 · 루틴 · 익스텐션을 익히고 팀 대시보드까지. 사전 신청 선착순 100명 99,000원, 이후 109,000원.">
+<link rel="preload" href="assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="announce" href="#apply">
+  <span class="pill pill-accent">Beta</span>
+  <span>사전 신청 선착순 100명 99,000원 · 베타 혜택 포함</span>
+  <span aria-hidden="true">→</span>
+</a>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="챗대리"><img src="assets/img/logo.png" alt="CHATdaeri" width="148" height="19"></a>
+    <nav class="nav-links" aria-label="페이지 안내">
+      <a href="#curriculum">커리큘럼</a>
+      <a href="#beta">신청 혜택</a>
+      <a href="#qna">QnA</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#apply">사전 신청 <span aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- [1] 히어로: 세컨드 브레인을 다이아몬드 점묘로 (hero.js) -->
+<section class="hero" id="hero" aria-labelledby="hero-h">
+  <canvas class="dia" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="hero-eb"><span>[</span> 챗대리 온라인 강의 · 6시간 내외 <span>]</span></p>
+      <p class="hero-hook">26년 연말에 세팅하고, 27년 내내 AI에게 일 시키세요</p>
+      <h1 id="hero-h">클로드 코드로 만드는<br>AI 에이전트 시스템</h1>
+      <p class="hero-sub">세컨드 브레인 · 업무 대시보드</p>
+      <dl class="hero-dates">
+        <div><dt>베타 오픈 예정일</dt><dd>12월 11일</dd></div>
+        <div><dt>정식 오픈 예정일</dt><dd>12월 29일</dd></div>
+      </dl>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#apply">사전 신청 <span aria-hidden="true">→</span></a>
+        <a class="btn btn-line" href="#curriculum">커리큘럼 보기</a>
+      </div>
+    </div>
+    <canvas class="hero-art" role="img" aria-label="분야 구체 여섯 개와 가운데 핵으로 된 세컨드 브레인이 다이아몬드 점으로 그려져 천천히 돌고, 바깥의 자료 점들이 구체로 모여듭니다"></canvas>
+  </div>
+</section>
+
+<!-- [2] BEFORE → AFTER -->
+<section class="sec has-dia" aria-labelledby="ba-h">
+  <canvas class="dia" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">01</span> / BEFORE → AFTER</p>
+      <h2 id="ba-h">AI는 강력해졌는데, 왜 내 일은 생각만큼 줄지 않을까요?</h2>
+      <p class="lead">AI를 일하게 만드는 환경 세팅을 아직 안 해 두셨기 때문입니다.</p>
+    </div>
+    <div class="ba">
+      <article class="ba-card">
+        <p class="ba-top"><span class="ba-key">S</span><span class="ba-name">Skill · 스킬</span></p>
+        <h3>클릭 한 번이면 실행되는 나만의 업무 단축키</h3>
+        <div class="ba-pairs chat-box">
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>견적서 또 처음부터 써야 하네… 지난번 프롬프트 어디 뒀더라 ㅠㅠ</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">견적서 스킬 눌러 주세요. 사업자 정보 넣어서 바로 만들어 드릴게요!</span></p></div></div>
+          </div>
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>회사 PPT 양식이 바뀌었네… 스킬로 만들면 옛날 양식으로 나오잖아</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">바뀐 양식은 제가 스킬에 알아서 업데이트해 둘게요.</span></p></div></div>
+          </div>
+        </div>
+      </article>
+      <article class="ba-card">
+        <p class="ba-top"><span class="ba-key">S</span><span class="ba-name">Second Brain · 세컨드 브레인</span></p>
+        <h3>내 모든 걸 기억하는 AI</h3>
+        <div class="ba-pairs chat-box">
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>저번에 찍었던 촬영본 어디 있지? 폴더 정리 좀 해 둘걸 ㅠㅠ</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">여기 있어요! 지난번 유튜브 촬영본이에요.</span></p></div></div>
+          </div>
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>AI한테 일 시킬 때마다 내 일에 대해 일일이 설명해야 하나…?</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">일일이 설명할 필요 없어요. 제가 메모리와 세컨드 브레인을 참고해 알아서 해 드릴게요.</span></p></div></div>
+          </div>
+        </div>
+      </article>
+      <article class="ba-card">
+        <p class="ba-top"><span class="ba-key">R</span><span class="ba-name">Routine · 루틴</span></p>
+        <h3>시간이 되면 자동 실행되는 예약 업무 자동화</h3>
+        <div class="ba-pairs chat-box">
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>오늘 미팅 몇 시였더라? 메일함·캘린더·할 일 다 열어 봐야겠네</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">좋은 아침이에요! 오전 9시 업무 브리핑이에요. 오늘 미팅이랑 답장할 메일, 할 일 정리해 뒀어요.</span></p></div></div>
+          </div>
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>노트북 덮어 놨더니 아침 루틴이 안 돌았네 ㅠㅠ</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">걱정 마세요. 컴퓨터가 꺼져 있어도 제가 24시간 예약 업무를 돌리고 있어요.</span></p></div></div>
+          </div>
+        </div>
+      </article>
+      <article class="ba-card">
+        <p class="ba-top"><span class="ba-key">+</span><span class="ba-name">Extension · 익스텐션</span></p>
+        <h3>AI에 확장기능 붙여 기능 더하기</h3>
+        <div class="ba-pairs chat-box">
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>메일 열고, 드라이브에서 파일 찾고, 다시 AI 창에 복사해 붙여 넣고…</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">그냥 "내 Gmail 확인해 줘"라고 하세요. 제가 직접 읽어 올게요.</span></p></div></div>
+          </div>
+          <div class="chat">
+            <div class="msg me"><span class="who">적용 전 · 나</span><p>노션 앱 사용법 또 배워야 하네… 배울 거 왜 이렇게 많지</p></div>
+            <div class="msg ai"><img class="av" src="assets/img/clawd.svg" alt="" width="40" height="22"><div><span class="who">적용 후 · AI</span><p><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="txt">새 앱 배우지 마세요. 필요한 기능만 담은 나만의 노션을 만들어 드릴게요.</span></p></div></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- [3] SSR+ (유튜브 모션그래픽 재사용) -->
+<section class="sec" aria-labelledby="ssr-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">02</span> / SSR+ 프레임워크</p>
+      <h2 id="ssr-h">대시보드는 AI 에이전트 시스템의 표면일 뿐입니다</h2>
+      <p class="lead">그 밑에서 데이터와 작업 공간을 먼저 세팅해야 합니다. 저는 스킬·세컨드 브레인·루틴·익스텐션 네 영역을 SSR+라고 부르고, 초급 → 중급 → 고급 세팅마다 네 영역을 함께 쌓습니다.</p>
+    </div>
+    <div class="ssr-media">
+      <figure class="mg">
+        <video class="mg-video" src="assets/video/ssr.mp4" poster="assets/img/ssr-poster.webp" muted playsinline preload="metadata" width="1600" height="900" aria-label="AI 시스템 판 아래로 스킬·세컨드 브레인·루틴·익스텐션 4층이 채워지고, 첫 글자를 모아 SSR+가 되는 유튜브 영상 속 모션그래픽"></video>
+        <button class="mg-replay" type="button" hidden>다시 보기</button>
+      </figure>
+      <figure class="yt">
+        <div class="yt-frame"><a class="yt-play" href="https://www.youtube.com/watch?v=3Me5BJgsG7E" data-yt="3Me5BJgsG7E" target="_blank" rel="noopener" aria-label="클로드는 이렇게 쓰는 겁니다 영상 재생"><img src="https://i.ytimg.com/vi/3Me5BJgsG7E/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/3Me5BJgsG7E/hqdefault.jpg'" alt="" loading="lazy" width="1280" height="720"><span class="yt-btn" aria-hidden="true"></span></a></div>
+        <figcaption><b>클로드는 이렇게 쓰는 겁니다</b><a href="https://www.youtube.com/watch?v=3Me5BJgsG7E" target="_blank" rel="noopener">소개 영상 보기 <span aria-hidden="true">→</span></a></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- [5] 커리큘럼 -->
+<section class="sec sec-bone" id="curriculum" aria-labelledby="cur-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow eyebrow-lg"><span class="n">03</span> / 커리큘럼 · VOD 강의 · 6시간 이상 구성 · 7단원 28레슨</p>
+      <h2 id="cur-h">설치부터 내 대시보드까지</h2>
+      <p class="lead">총 6시간 이상 분량으로 개념 설명과 실습을 함께 담았습니다.</p>
+    </div>
+    <div class="req">
+      <p class="req-h">수강 필수 사항</p>
+      <ul class="req-list">
+        <li><b>Claude Pro 이상 요금제</b><span>Claude Code 사용에 필요합니다</span></li>
+        <li><b>Mac 또는 Windows 컴퓨터</b><span>클로드 코드를 설치해 실습합니다</span></li>
+        <li><b>구글 계정</b><span>지메일·드라이브·캘린더 연결 실습에 씁니다</span></li>
+      </ul>
+      <p class="req-opt"><b>선택 사항</b><span>팀 대시보드 세팅을 원하면 Railway 호스팅 비용(월 $5 내외)이 필요합니다.</span><span>24시간 루틴 세팅까지 원하면 Hermes 세팅을 위한 남는 PC가 필요합니다.</span></p>
+    </div>
+    <div class="units">
+      <article class="unit">
+        <p class="unit-eb">단원 0</p>
+        <h3>클로드 코드 셋업하기</h3>
+        <ol class="lessons">
+          <li><span>0-1</span>세 가지 UI 비교: 데스크톱 앱, VS Code 익스텐션, 터미널</li>
+          <li><span>0-2</span>클로드 코드 시작하기</li>
+          <li><span>0-3</span>요금제와 토큰</li>
+          <li><span>0-4</span>컨텍스트 창 관리하기</li>
+        </ol>
+      </article>
+      <p class="unit-group"><span class="pill pill-line">기본</span>클로드 코드의 기본 기능 4가지 익히기</p>
+      <article class="unit">
+        <p class="unit-eb">단원 1 · Skill</p>
+        <h3>스킬</h3>
+        <ol class="lessons">
+          <li><span>1-1</span>스킬이란?</li>
+          <li><span>1-2</span>나만의 스킬 만들기</li>
+          <li><span>1-3</span>다른 사람의 스킬 설치해 사용하기</li>
+          <li><span>1-4</span>정확히 작동하는 스킬 만드는 방법</li>
+        </ol>
+      </article>
+      <article class="unit">
+        <p class="unit-eb">단원 2 · Second Brain</p>
+        <h3>세컨드 브레인</h3>
+        <ol class="lessons">
+          <li><span>2-1</span>세컨드 브레인이란?</li>
+          <li><span>2-2</span>세컨드 브레인의 구조: 지침 파일, 업무 파일, 메모리</li>
+          <li><span>2-3</span>나 자신을 인터뷰해 지침 파일(AGENTS.md) 만드는 법</li>
+          <li><span>2-4</span>세컨드 브레인 30분 만에 만드는 법</li>
+          <li><span>2-5</span>세컨드 브레인 시각화하기</li>
+        </ol>
+      </article>
+      <article class="unit">
+        <p class="unit-eb">단원 3 · Routine</p>
+        <h3>루틴</h3>
+        <ol class="lessons">
+          <li><span>3-1</span>루틴이란?</li>
+          <li><span>3-2</span>스킬로 루틴 만들기</li>
+          <li><span>3-3</span>원격에서 작동하는 루틴 만들기</li>
+        </ol>
+      </article>
+      <article class="unit">
+        <p class="unit-eb">단원 4 · Extension</p>
+        <h3>익스텐션</h3>
+        <ol class="lessons">
+          <li><span>4-1</span>익스텐션 3가지: MCP, CLI, API</li>
+          <li><span>4-2</span>MCP로 데이터 연결하기</li>
+          <li><span>4-3</span>CLI·API로 데이터 연결하기</li>
+          <li><span>4-4</span>익스텐션을 사용한 스킬 만들기</li>
+        </ol>
+      </article>
+      <p class="unit-group"><span class="pill pill-accent">고급</span></p>
+      <article class="unit">
+        <p class="unit-eb">단원 5</p>
+        <h3>세컨드 브레인 업데이트하고 유지하기</h3>
+        <ol class="lessons">
+          <li><span>5-1</span>세컨드 브레인에 데이터 자동 추가하기 (데이터 수집기)</li>
+          <li><span>5-2</span>세컨드 브레인 업데이트하기 (일일 예약작업)</li>
+          <li><span>5-3</span>세컨드 브레인 최적화하기 (주간 예약작업)</li>
+        </ol>
+      </article>
+      <article class="unit">
+        <p class="unit-eb">단원 6</p>
+        <h3>팀 대시보드 만들기</h3>
+        <ol class="lessons">
+          <li><span>6-1</span>나만의 대시보드 만들기</li>
+          <li><span>6-2</span>세컨드 브레인 연동 스킬 만들기</li>
+          <li><span>6-3</span>24시간 돌아가는 세컨드 브레인 만들기</li>
+          <li><span>6-4</span>Railway 세팅하기</li>
+          <li><span>6-5</span>팀과 함께 사용하는 세컨드 브레인 만들기</li>
+        </ol>
+      </article>
+      <aside class="unit unit-kit">
+        <p class="unit-eb">모든 수강생 제공</p>
+        <h3>바로 쓰는 자료</h3>
+        <ul class="kit">
+          <li>SSR+ 가이드 PDF와 복사용 프롬프트</li>
+          <li>세컨드 브레인 폴더 시작 템플릿</li>
+          <li>검색 스크립트 · 탐색기 · 대시보드 시작 코드</li>
+          <li>레슨별 사용 모델과 프롬프트 원문</li>
+        </ul>
+      </aside>
+    </div>
+    <p class="cur-note">*커리큘럼은 강의 런칭 전까지 일부 변경될 수 있습니다.</p>
+  </div>
+</section>
+
+<!-- [6] 완성 결과물 -->
+<section class="sec" id="out" aria-labelledby="out-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">04</span> / 완성 결과물</p>
+      <h2 id="out-h">강사가 매일 쓰는 대시보드를 같이 만듭니다</h2>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="dash" data-dash>
+      <ol class="dash-steps" aria-label="화면 구성">
+        <li data-step="0"><b>한 화면</b><span>지표·세컨드 브레인·메일·스킬·루틴을 한 화면에</span></li>
+        <li data-step="1"><b>지표</b><span>유튜브·뉴스레터 수치를 매일 9시에 모아 전일과 비교</span></li>
+        <li data-step="2"><b>세컨드 브레인 탐색기</b><span>구 하나가 업무 분야 하나, 점 하나가 자료 한 건</span></li>
+        <li data-step="3"><b>스킬</b><span>103개 스킬을 검색하고 Claude·Codex 중 골라 바로 실행</span></li>
+        <li data-step="4"><b>루틴</b><span>실행 주기와 최근 결과를 한 줄씩, 버튼으로 다시 실행</span></li>
+      </ol>
+      <figure class="shot">
+        <div class="shot-frame">
+          <video class="shot-media" src="assets/video/dashboard.mp4" poster="assets/img/dashboard.webp" muted playsinline preload="none" width="3200" height="2000" aria-label="업무 대시보드 전체 화면: 왼쪽 유튜브·뉴스레터 지표, 가운데 세컨드 브레인 구체, 오른쪽 메일·스킬·루틴. 메일과 파일 이름은 가렸습니다."></video>
+        </div>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="panels">
+      <div class="panels-col">
+        <figure>
+          <img src="assets/img/panel-skills.webp" alt="스킬 패널: 스킬 카드마다 실행 버튼과 상태" loading="lazy" width="776" height="484">
+          <figcaption><b>스킬</b> 103개 스킬을 검색하고 Claude·Codex 중 골라 바로 실행합니다.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/img/panel-routines.webp" alt="루틴 패널: 루틴마다 실행 주기, 다음 실행, 최근 결과" loading="lazy" width="776" height="436">
+          <figcaption><b>루틴</b> 실행 주기와 최근 결과를 한 줄씩. 버튼으로 다시 돌립니다.</figcaption>
+        </figure>
+      </div>
+      <figure>
+        <img src="assets/img/panel-metrics.webp" alt="지표 패널: 유튜브 조회수 합계와 뉴스레터 구독자 수, 전일 대비 증가" loading="lazy" width="744" height="350">
+        <figcaption><b>지표</b> 유튜브·뉴스레터 수치를 매일 9시에 모아 전일과 비교합니다.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- [7] 베타 혜택 -->
+<section class="sec sec-bone" id="beta" aria-labelledby="beta-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">05</span> / 사전 신청 혜택</p>
+      <h2 id="beta-h">얼리버드 특가</h2>
+    </div>
+    <div class="tiers">
+      <div class="tier tier-on">
+        <p class="tier-k"><span class="pill pill-accent">Beta</span> 선착순 100명</p>
+        <p class="tier-p"><b>99,000원</b><s>149,000원</s></p>
+      </div>
+      <div class="tier">
+        <p class="tier-k">101번째 신청부터</p>
+        <p class="tier-p"><b>109,000원</b><s>149,000원</s></p>
+      </div>
+    </div>
+    <p class="price-note">*사전 신청 시 특가 쿠폰을 드립니다. 그 외에는 정가로 오픈할 예정입니다.</p>
+    <p class="perks-h"><span class="pill pill-accent">Beta</span> 선착순 100명에게 드리는 혜택</p>
+    <p class="perks-sub">미션 참여 시 라이브 코칭 + 내 대시보드 1:1 정밀 진단까지</p>
+    <div class="perks">
+      <div class="perk">
+        <p class="perk-eb"><span class="perk-tag">베타 only</span> 미션 달성 리워드 1</p>
+        <h3>실시간 라이브 피드백</h3>
+        <p>미션 수행 중 생기는 궁금증과 막히는 지점을 라이브 세션에서 즉각 해결해 드립니다.</p>
+      </div>
+      <div class="perk">
+        <p class="perk-eb"><span class="perk-tag">베타 only</span> 미션 달성 리워드 2</p>
+        <h3>내 대시보드 1:1 상세 피드백</h3>
+        <p>제작한 대시보드를 제출하면 강사가 검토하고 맞춤 피드백을 상세히 남겨 드립니다.</p>
+      </div>
+    </div>
+    <div class="cond">
+      <p class="cond-h">베타 클래스 운영 안내</p>
+      <p>베타 클래스는 정식 오픈 전 베타 버전으로, 커리큘럼이 순차적으로 촬영 및 업로드됩니다. 베타 오픈 후 결제 즉시 현재까지 오픈된 강의를 바로 수강하실 수 있으며, 이후 제작되는 강의는 업로드와 동시에 추가 비용 없이 열람 가능합니다. (베타 기간 종료 후 정식 오픈 시 수강료가 인상될 예정입니다.)</p>
+    </div>
+    <a class="btn btn-primary" href="#apply">사전 신청하기 <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<!-- [8] 강사 -->
+<section class="sec" aria-labelledby="who-h">
+  <div class="wrap who">
+    <figure class="who-photo"><img src="assets/img/instructor.webp" alt="강사 챗대리(박진주)" width="735" height="870" loading="lazy">
+      <figcaption class="who-links">
+        <a href="https://www.youtube.com/@chatdaeri" target="_blank" rel="noopener"><b>유튜브</b><span>@chatdaeri</span></a>
+        <a href="https://blog.chatdaeri.com" target="_blank" rel="noopener"><b>뉴스레터</b><span>구독자 3,458명</span></a>
+        <a href="https://www.linkedin.com/in/chatdaeri" target="_blank" rel="noopener"><b>링크드인</b><span>chatdaeri</span></a>
+      </figcaption>
+    </figure>
+    <div class="who-body">
+      <p class="eyebrow"><span class="n">06</span> / 강사</p>
+      <h2 id="who-h">챗대리 <small>박진주 · 시너지랩스 대표</small></h2>
+      <p class="lead">실제 기업과 기관의 AX 구축 경험을 바탕으로 유지 가능한 에이전트 시스템을 알려 드려요.</p>
+      <div class="cred">
+        <section class="cred-g">
+          <h3>AX 구축</h3>
+          <ul>
+            <li><b>BK Homebrokers</b><span>부동산 매물 메일 자동 분류·AI 요약 시스템 · 주 4~5시간 → 약 1시간</span></li>
+            <li><b>콜레오마케팅</b><span>LG 계열사 내부 자료를 검색·활용해 콘텐츠를 만드는 AI 워크플로 구축·월간 유지보수</span></li>
+            <li><b>LH 업무 지원 앱</b><span>내부 지원 앱의 데이터 전처리와 AI 네이티브 설계·구축</span></li>
+          </ul>
+        </section>
+        <section class="cred-g">
+          <h3>AX 교육</h3>
+          <ul>
+            <li><b>명지대학교 AID 컨소시엄</b><span>부동산 분야 재직자 훈련 · 클로드 코드로 프로젝트 스케줄링·인사이트 리포트 자동화</span></li>
+            <li><b>한국무역협회</b><span>K커리어마스터 · AI 활용 기초부터 마케팅 자동화까지 3일 과정</span></li>
+            <li><b>한국부동산마케팅협회</b><span>회원사 AI 세미나·마케팅기획자 양성과정</span></li>
+            <li><b>그 외 기업 교육 출강</b><span>CLK, 미드미네트웍스, CJ올리브네트웍스 등 다수</span></li>
+          </ul>
+        </section>
+        <section class="cred-g cred-row">
+          <h3>저서</h3>
+          <ul>
+            <li><b>《따라하면 바로 되는 AI 마케팅 자동화》</b><span>로드북</span></li>
+            <li><b>《이게 되네? 메이크 미친 자동화 36제》</b><span>골든래빗</span></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- [9] QnA -->
+<section class="sec sec-bone" id="qna" aria-labelledby="qna-h">
+  <div class="wrap qna">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">07</span> / QnA</p>
+      <h2 id="qna-h">자주 묻는 질문</h2>
+    </div>
+    <div class="faq">
+      <details><summary>세컨드 브레인을 처음부터 만드는 과정이 있나요?</summary><p>있습니다. 단원 2에서 세컨드 브레인의 구조(지침 파일·업무 파일·메모리)를 익히고, 나 자신을 인터뷰해 지침 파일(AGENTS.md)을 만든 뒤 30분 만에 세컨드 브레인을 완성하고 시각화까지 합니다.</p></details>
+      <details><summary>영상 속 대시보드도 만들 수 있나요?</summary><p>고급 단원 6에서 만듭니다. 내 컴퓨터에서 띄우는 웹앱으로, 화면은 HTML이고 뒤에서 내 컴퓨터 서버가 메일·스킬·루틴을 연결합니다. 나만의 대시보드를 만든 뒤 세컨드 브레인 연동 스킬, 24시간 운영, 팀 공유까지 이어서 다룹니다.</p></details>
+      <details><summary>검색·탐색기 코드를 받을 수 있나요?</summary><p>모든 수강생에게 검색 스크립트·탐색기·대시보드 시작 코드를 드리고, 내 자료에 맞게 고칠 곳을 함께 알려 드립니다.</p></details>
+      <details><summary>영상에서 쓴 모델과 프롬프트를 알 수 있나요?</summary><p>레슨마다 사용한 모델과 실제 입력한 프롬프트 원문을 함께 드립니다.</p></details>
+      <details><summary>Codex로도 할 수 있나요?</summary><p>이 강의는 기본적으로 클로드에 맞춘 교육과정이라 클로드를 권장드리지만, AI에 공통으로 적용되는 구조를 기반으로 진행하기에 Codex에도 적용하실 수 있습니다.</p></details>
+      <details><summary>회사 자료를 연결해도 괜찮을까요?</summary><p>고급 단원에서 팀을 위한 세컨드 브레인을 구축하는 과정을 다룹니다. 다만 외부망이 제한된 회사처럼 외부 연결을 완전히 막아야 하는 환경은 별도의 자동화 구축이 필요합니다.</p></details>
+      <details><summary>팀·부서 자료도 함께 관리할 수 있나요?</summary><p>6-4 레슨에서 팀 대시보드를 올릴 Railway를 세팅하고, 6-5 레슨에서 팀과 함께 사용하는 세컨드 브레인을 만듭니다. Railway 호스팅 비용은 월 $5 내외입니다.</p></details>
+      <details><summary>컴퓨터를 꺼 두어도 루틴이 돌아가나요?</summary><p>3-3 레슨에서 원격에서 작동하는 루틴을, 6-3 레슨에서 24시간 돌아가는 세컨드 브레인을 만듭니다. 24시간 루틴까지 세팅하려면 Hermes를 설치할 남는 PC가 필요합니다.</p></details>
+      <details><summary>세컨드 브레인은 만든 뒤에 어떻게 관리하나요?</summary><p>고급 단원 5에서 데이터 수집기로 자료를 자동으로 넣고, 일일 예약작업으로 업데이트하고, 주간 예약작업으로 최적화합니다.</p></details>
+      <details><summary>Claude Pro만 가입했는데, 코드를 몰라도 따라갈 수 있나요?</summary><p>됩니다. ChatGPT·Claude 같은 채팅형 AI를 써 봤다면 충분합니다. 설치·요금제·권한 설정부터 단원 0에서 같이 합니다.</p></details>
+      <details><summary>Mac과 Windows 중 어느 쪽이 좋나요?</summary><p>둘 다 됩니다. 운영체제마다 다른 설치 과정은 단원 0에서 따로 보여 드립니다.</p></details>
+      <details><summary>어떤 요금제가 필요한가요?</summary><p>Claude Pro 이상 요금제가 필요합니다. 0-3 레슨에서 요금제별 차이와 토큰 사용량 확인법을 다룹니다.</p></details>
+      <details><summary>강의는 온라인으로 진행되나요?</summary><p>네. 강의는 VOD 형태로 온라인으로 오픈될 예정입니다.</p></details>
+      <details><summary>총 몇 시간인가요?</summary><p>총 6시간 이상 분량입니다.</p></details>
+      <details><summary>베타 클래스는 어떻게 진행되나요?</summary><p>정식 오픈 전 베타 버전으로, 커리큘럼을 순차적으로 촬영해 올립니다. 결제하면 그때까지 공개된 강의를 바로 수강하고, 이후 올라오는 강의도 추가 비용 없이 볼 수 있습니다. 베타 기간이 끝나고 정식 오픈하면 수강료가 오를 예정입니다.</p></details>
+      <details><summary>가격과 베타 혜택은 어떻게 되나요?</summary><p>사전 신청 선착순 100명은 99,000원, 101번째 신청부터는 109,000원입니다. 사전 신청을 하지 않으면 정가 149,000원입니다. 선착순 100명에게는 미션 달성 리워드로 실시간 라이브 피드백과 내 대시보드 1:1 상세 피드백을 드립니다.</p></details>
+      <details><summary>사전 신청하면 어떻게 알려 주나요?</summary><p>오픈하면 신청 순서대로 이메일과 문자로 오픈 알림과 할인 쿠폰을 보냅니다. 챗대리 뉴스레터는 원하는 분만 선택해 구독할 수 있고, 메일 아래의 구독 해지 링크로 언제든 해지할 수 있습니다.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- [10] 신청 폼 -->
+<section class="sec has-dia sec-apply" id="apply" aria-labelledby="apply-h">
+  <canvas class="dia" aria-hidden="true"></canvas>
+  <div class="wrap apply">
+    <div class="sec-head">
+      <p class="eyebrow"><span class="n">08</span> / 사전 신청 <span class="pill pill-accent">Beta</span></p>
+      <h2 id="apply-h">오픈하면 가장 먼저 알려 드립니다</h2>
+      <p class="lead">오픈하면 신청 순서대로 할인 쿠폰을 보냅니다.</p>
+      <p class="apply-date">오픈 예정일 : 12월 11일</p>
+    </div>
+    <form class="form" novalidate>
+      <label class="f-email"><span class="sr">이메일</span><input type="email" name="email" required autocomplete="email" placeholder="이메일 주소"></label>
+      <label class="f-tel"><span class="sr">휴대전화 번호</span><input type="tel" name="phone" required autocomplete="tel" pattern="01[0-9]-[0-9]{4}-[0-9]{4}" inputmode="numeric" maxlength="13" placeholder="010-1234-5678" title="010-1234-5678 형태로 입력해 주세요"></label>
+      <label class="hp" aria-hidden="true">홈페이지<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <button class="btn btn-primary" type="submit">사전 신청하기 <span aria-hidden="true">→</span></button>
+      <p class="f-hint" aria-live="polite"></p>
+      <div class="f-agree">
+        <label class="f-check f-all"><input type="checkbox" data-all> 아래 내용에 모두 동의합니다</label>
+        <div class="f-row"><label class="f-check"><input type="checkbox" name="agree_privacy" required> <b>[필수]</b> 개인정보 수집·이용 동의</label><button type="button" class="f-more" data-terms="t-privacy">자세히</button></div>
+        <div class="f-row"><label class="f-check"><input type="checkbox" name="agree_newsletter"> <b class="opt">[선택]</b> 챗대리 뉴스레터 구독(광고성 정보 이메일 수신) 동의</label><a class="f-more" href="https://chatdaeri.com/newsletter-consent/" target="_blank" rel="noopener">자세히</a></div>
+        <p class="f-terms">AI 활용법과 강의 소식을 이메일로 받아 보세요. 뉴스레터 구독에 동의하지 않아도 사전 신청과 오픈 알림은 그대로 받으실 수 있습니다.</p>
+      </div>
+      <div class="f-ts" id="f-ts"></div>
+      <p class="f-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">© 챗대리 · 시너지랩스</div>
+</footer>
+
+<dialog class="terms" id="t-privacy" aria-labelledby="t-privacy-h">
+  <h3 id="t-privacy-h">개인정보 수집·이용 동의</h3>
+  <table>
+    <tr><th>수집 항목</th><td>이메일 주소, 휴대전화 번호</td></tr>
+    <tr><th>이용 목적</th><td>신청 접수 확인 메일, 신청하신 강의 오픈 알림과 사전 신청 특가 쿠폰 발송(이메일·문자)</td></tr>
+    <tr><th>보유 기간</th><td>사전 신청 혜택 제공 종료 시까지(뉴스레터 구독에 동의한 경우 이메일은 구독 해지 시까지)</td></tr>
+  </table>
+  <p>자동·반복 신청을 막기 위해 신청할 때 접속 정보를 확인합니다(접속 IP를 되돌릴 수 없게 바꾼 값, 24시간 후 삭제).</p>
+  <p>개인정보 수집·이용에 동의하지 않을 수 있습니다. 다만 동의하지 않으면 사전 신청을 할 수 없습니다.</p>
+  <p>위탁·국외 이전 등 자세한 내용은 <a href="https://synergylabs.kr/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>에서 확인하실 수 있습니다.</p>
+  <form method="dialog"><button class="btn btn-primary btn-sm">닫기</button></form>
+</dialog>
+
+<div class="sticky" aria-hidden="true">
+  <div class="wrap sticky-in">
+    <span class="sticky-deal"><span class="sticky-k">선착순 100명</span><em>33%</em><b>99,000원</b><s class="sticky-list">149,000원</s><span class="sticky-sub">이후 사전 신청 <em>26%</em> 109,000원</span></span>
+    <a class="btn btn-primary btn-sm" href="#apply" tabindex="-1">사전 신청 <span aria-hidden="true">→</span></a>
+  </div>
+</div>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer></script>
+<script src="vendor/gsap/gsap.min.js"></script>
+<script src="vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="motion.js"></script>
+<script src="diamonds.js"></script>
+<script src="hero.js"></script>
+<script>
+// 유튜브: 썸네일을 누르면 그 자리에서 재생(파일로 열었을 땐 YouTube가 막아서 새 탭으로)
+document.querySelectorAll('.yt-play').forEach(a => a.addEventListener('click', e => {
+  if (location.protocol === 'file:') return;
+  e.preventDefault();
+  const f = document.createElement('iframe');
+  f.src = 'https://www.youtube-nocookie.com/embed/' + a.dataset.yt + '?autoplay=1&rel=0';
+  f.title = '클로드는 이렇게 쓰는 겁니다 — 챗대리 유튜브';
+  f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  f.referrerPolicy = 'strict-origin-when-cross-origin'; f.allowFullscreen = true;
+  a.replaceWith(f);
+}));
+</script>
+<script>
+// 하단 고정 바: 히어로를 지나면 보이고, 신청 폼에 오면 숨김
+(() => {
+  const bar = document.querySelector('.sticky'), hero = document.getElementById('hero'), apply = document.getElementById('apply');
+  let pastHero = false, atApply = false;
+  const set = () => { const on = pastHero && !atApply; bar.classList.toggle('on', on); bar.setAttribute('aria-hidden', String(!on)); bar.querySelector('a').tabIndex = on ? 0 : -1; };
+  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting; set(); }).observe(hero);
+  new IntersectionObserver(([e]) => { atApply = e.isIntersecting; set(); }, { threshold: 0.2 }).observe(apply);
+  // 사전 신청: Supabase 서버 함수가 봇 확인 → DB 저장 → 접수 메일 → (뉴스레터 동의 시) Ghost 확인 메일을 처리한다
+  const FN_URL = 'https://tkudxecgofobkhlsddfx.supabase.co/functions/v1/prelaunch-signup';
+  // Cloudflare Turnstile 공개 키. 로컬 미리보기에서는 Cloudflare 테스트 키를 쓴다(서버가 거부하므로 실제 저장은 배포 주소에서만)
+  const TS_KEY = /^(127\.0\.0\.1|localhost)$/.test(location.hostname) ? '1x00000000000000000000AA' : '0x4AAAAAAGIDxe61DJLx7rTJ';
+  let tsId = null;
+  window.onTurnstileLoad = () => { tsId = turnstile.render('#f-ts', { sitekey: TS_KEY, appearance: 'interaction-only', language: 'ko', action: 'prelaunch' }); };
+  if (window.turnstile && window.turnstile.render) window.onTurnstileLoad();
+  const tsReset = () => { try { if (tsId !== null) turnstile.reset(tsId); } catch (_) {} };
+  const form = document.querySelector('.form'), msg = form.querySelector('.f-msg'), btn = form.querySelector('button[type=submit]');
+  const all = form.querySelector('[data-all]'), boxes = [...form.querySelectorAll('.f-check input:not([data-all])')];
+  form.querySelectorAll('button.f-more').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.terms).showModal()));
+  document.querySelectorAll('dialog.terms').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+  all.addEventListener('change', () => boxes.forEach(b => { b.checked = all.checked; }));
+  boxes.forEach(b => b.addEventListener('change', () => { all.checked = boxes.every(x => x.checked); }));
+  // 휴대전화: 숫자만 입력해도 010-1234-5678 형태로 맞춘다
+  form.phone.addEventListener('input', () => {
+    const d = form.phone.value.replace(/[^0-9]/g, '').slice(0, 11);
+    form.phone.value = d.length > 7 ? `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}` : d.length > 3 ? `${d.slice(0, 3)}-${d.slice(3)}` : d;
+  });
+  // 이메일 오타 방지: 접수 메일을 보낼 주소를 미리 보여 준다
+  const hint = form.querySelector('.f-hint');
+  form.email.addEventListener('input', () => {
+    const v = form.email.value.trim();
+    hint.textContent = form.email.checkValidity() && v ? `접수 메일을 보낼 주소: ${v}` : '';
+  });
+  // 뉴스레터 구독 확인 메일: Ghost가 같은 IP의 반복 요청을 막으므로 서버가 아닌 신청자 브라우저에서 직접 요청한다
+  const GHOST = 'https://blog.chatdaeri.com/members/api';
+  const ghostSignup = async email => {
+    try {
+      const t = await fetch(`${GHOST}/integrity-token/`);
+      const integrityToken = t.ok ? (await t.text()).trim() : undefined;
+      const r = await fetch(`${GHOST}/send-magic-link/`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, emailType: 'signup', labels: ['prelaunch-2612'], integrityToken })
+      });
+      return r.ok;
+    } catch (_) { return false; }
+  };
+  const done = text => { msg.textContent = text; btn.disabled = true; form.querySelectorAll('input').forEach(i => { i.disabled = true; }); };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { msg.textContent = '이메일·휴대전화 번호와 필수 동의 항목을 확인해 주세요.'; form.reportValidity(); return; }
+    if (form.website.value) { done('오픈 알림 신청이 접수되었습니다.'); return; }
+    const token = (window.turnstile && tsId !== null) ? turnstile.getResponse(tsId) : '';
+    if (!token) { msg.textContent = '자동 확인을 진행하고 있습니다. 잠시 후 다시 눌러 주세요.'; return; }
+    const body = {
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      privacy_consent: form.agree_privacy.checked,
+      newsletter_optin: form.agree_newsletter.checked,
+      consent_version: 'v261118',
+      source_url: location.origin + location.pathname,
+      hp: form.website.value,
+      turnstile: token
+    };
+    btn.disabled = true; msg.textContent = '접수 중입니다…';
+    try {
+      const r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const res = await r.json().catch(() => ({}));
+      const ghostFail = ' 뉴스레터 구독 확인 메일은 보내지 못했어요. blog.chatdaeri.com에서 다시 구독해 주세요.';
+      if (r.ok && res.status === 'created') {
+        if (!res.newsletter) return done('오픈 알림 신청이 접수되었습니다. 접수 확인 메일을 보내 드렸어요.');
+        return done(await ghostSignup(body.email)
+          ? '알림 신청과 뉴스레터 구독 신청 감사합니다. 메일로 도착한 구독 확인 버튼을 누르면 웰컴 메일을 보내 드립니다.'
+          : '오픈 알림 신청이 접수되었습니다.' + ghostFail);
+      }
+      if (r.ok && res.status === 'duplicate') {
+        if (!res.newsletter) return done('이미 신청하신 이메일입니다. 오픈하면 알려 드릴게요.');
+        return done(await ghostSignup(body.email)
+          ? '이미 오픈 알림을 신청하셨어요. 뉴스레터 구독 확인 메일을 보내 드렸습니다.'
+          : '이미 오픈 알림을 신청하셨어요.' + ghostFail);
+      }
+      const text = {
+        email: '이메일 주소를 확인해 주세요.',
+        phone: '휴대전화 번호를 010-1234-5678 형태로 입력해 주세요.',
+        consent: '필수 동의 항목에 동의해 주세요.',
+        bot: '자동 확인에 실패했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
+        rate: '같은 곳에서 신청이 여러 번 들어왔습니다. 1시간 뒤 다시 시도해 주세요.'
+      }[res.code];
+      msg.textContent = text || '접수하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    } catch (_) { msg.textContent = '네트워크 오류로 접수하지 못했습니다. 잠시 후 다시 시도해 주세요.'; }
+    tsReset();
+    btn.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>
